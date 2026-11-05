@@ -1,0 +1,169 @@
+# =============================================================================
+# Dependabot configuration — forms-flow-ai-micro-front-ends
+# -----------------------------------------------------------------------------
+# Review tiers (see .github/DEPENDABOT.md and .github/workflows/dependabot-triage.yml)
+#
+#   patch-only-safe  ONE grouped PR across all npm packages, patch bumps only.
+#                    Title: "Bump the patch-only-safe group across N directories
+#                    with M updates" → badge [✅ PATCH-ONLY]. One review pass, merge.
+#   minor / major    ONE PR per dependency, spanning every package that uses it
+#                    (group `one-pr-per-dependency`) → badges [🟡 MINOR] /
+#                    [🔴 MAJOR]. Reviewed deliberately, merged once.
+#   security-fixes   ONE grouped PR for Dependabot security updates →
+#                    badge [🔒 SECURITY]. Always on the default branch.
+#
+# Repo facts this file encodes:
+#   - 8 independently installed MFE packages + /scripts (CD helper). NOT a
+#     workspace monorepo: each directory has its own package-lock.json.
+#   - No `ignore` list on purpose: every available update is surfaced, so
+#     nothing is missed. Majors for policy-frozen libraries (React, webpack,
+#     single-spa, formio, the intentional jest/eslint/i18next drift; see
+#     CLAUDE.md "Hard Constraints") arrive as [🔴 MAJOR] PRs and are declined
+#     per PR with `@dependabot ignore this major version` when not planned.
+#   - Default branch is `develop`; no target-branch is set on purpose, because
+#     security updates only ever target the default branch and a non-default
+#     target-branch silently detaches the groups/labels from them.
+#
+# Manual refresh: Insights → Dependency graph → Dependabot → "Check for updates".
+# Validation:     Insights → Dependency graph → Dependabot (shows config errors).
+# =============================================================================
+version: 2
+
+updates:
+  # ===========================================================================
+  # npm — all micro-frontend packages + CD scripts, in ONE update job so the
+  # patch group spans every directory ("across N directories").
+  # ===========================================================================
+  - package-ecosystem: "npm"
+    directories:
+      - "/forms-flow-admin"
+      - "/forms-flow-components"
+      - "/forms-flow-integration"
+      - "/forms-flow-nav"
+      - "/forms-flow-review"
+      - "/forms-flow-service"
+      - "/forms-flow-submissions"
+      - "/forms-flow-theme"
+      - "/scripts"
+
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+
+    # Grouped patch PR + individual minor/major PRs can exceed the default of 5.
+    open-pull-requests-limit: 10
+
+    # Bump the range in package.json AND the lockfile (app behaviour). Without
+    # this Dependabot may treat non-private packages as libraries and "widen"
+    # ranges instead of bumping them.
+    versioning-strategy: "increase"
+
+    # Supply-chain cooldown: never take a release the day it is published.
+    # Most malicious npm publishes are yanked within days; waiting costs little.
+    cooldown:
+      default-days: 7
+      semver-patch-days: 7
+      semver-minor-days: 14
+      semver-major-days: 30
+
+    # Labels must already exist in the repo (unknown labels are ignored).
+    # Tier labels are added by dependabot-triage.yml, not here.
+    labels:
+      - "dependencies"
+      - "javascript"
+
+    # Branch names: dependabot/npm_and_yarn/<group-or-dep>-<hash>
+    pull-request-branch-name:
+      separator: "/"
+
+    groups:
+      # ---- ONE PR for every patch-level bump across all directories ----------
+      patch-only-safe:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+
+      # ---- ONE PR for security fixes (overrides the repo-level
+      #      "grouped security updates" toggle; keeps them out of the patch PR)
+      security-fixes:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+
+      # ---- Everything else (minor + major): ONE PR per dependency ------------
+      # Groups match in order, so patches are already taken by patch-only-safe.
+      # Without this group Dependabot raised one PR per dependency PER
+      # DIRECTORY (8 packages × 8 dependencies = 46 PRs on the first run).
+      # `group-by: dependency-name` collapses that to one PR per dependency
+      # that touches every directory using it. Title shape:
+      # "Bump <dep> in the one-pr-per-dependency group across N directories".
+      # Note: GitHub documents group-by on its own; this combination with a
+      # preceding update-types group is validated by the first Dependabot run
+      # (errors show in Insights → Dependency graph → Dependabot).
+      one-pr-per-dependency:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        group-by: "dependency-name"
+
+  # ===========================================================================
+  # Docker — base images of the 8 package Dockerfiles (node / nginx).
+  # Patch bumps grouped; minor/major (e.g. node 16 → 20) come individually
+  # because they change the build image and need a deliberate decision.
+  # ===========================================================================
+  - package-ecosystem: "docker"
+    directories:
+      - "/forms-flow-admin"
+      - "/forms-flow-components"
+      - "/forms-flow-integration"
+      - "/forms-flow-nav"
+      - "/forms-flow-review"
+      - "/forms-flow-service"
+      - "/forms-flow-submissions"
+      - "/forms-flow-theme"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      docker-patch-only-safe:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+      # One PR per image across all 8 Dockerfiles (e.g. one `node` PR, one
+      # `nginx` PR) instead of one per Dockerfile.
+      docker-one-pr-per-dependency:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        group-by: "dependency-name"
+
+  # ===========================================================================
+  # GitHub Actions — pins in .github/workflows (checkout, setup-node, aws, ...).
+  # One PR for everything; action bumps are low-risk and CI validates them.
+  # ===========================================================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+    groups:
+      github-actions-all:
+        applies-to: "version-updates"
+        patterns:
+          - "*"

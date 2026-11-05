@@ -27,6 +27,10 @@ interface CustomProgressBarProps
   minWidth?: string;
   /** Height of the progress bar */
   height?: string;
+  /** Background color of the unfilled track (CSS color or var()) */
+  trackColor?: string;
+  /** Fill color override (CSS color or var()); takes precedence over `color` */
+  barColor?: string;
 }
 
 /**
@@ -54,12 +58,15 @@ const CustomProgressBarComponent = forwardRef<
       className = "",
       minWidth = "250px",
       height = "20px",
+      trackColor = "#e9ecef",
+      barColor,
       ...restProps
     },
     ref
   ) => {
     // Memoized color calculation for better performance
     const progressColor = useMemo(() => {
+      if (barColor) return barColor;
       // Map color prop to CSS variables with fallbacks
       const colorMap: Record<string, string> = {
         passive: "var(--gray-dark)",
@@ -69,7 +76,7 @@ const CustomProgressBarComponent = forwardRef<
       };
 
       return color ? colorMap[color] || colorMap.default : colorMap.default;
-    }, [progress, color]);
+    }, [progress, color, barColor]);
 
     // Memoized container styles
     const containerStyle = useMemo(
@@ -95,10 +102,10 @@ const CustomProgressBarComponent = forwardRef<
     const trackStyle = useMemo(
       () => ({
         height,
-        backgroundColor: "#e9ecef",
+        backgroundColor: trackColor,
         borderRadius: "4px",
       }),
-      [height]
+      [height, trackColor]
     );
 
     // Build className string

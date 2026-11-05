@@ -72,6 +72,7 @@ declare module "@formsflow/service" {
     getUsageVariant,
     isOverLimit,
     getColumnPresetSizing,
+    isAiAssistantFeatureEnabled,
     cacheBranding,
     applyBranding,
     BRANDING_UPDATED_EVENT,
@@ -94,6 +95,8 @@ declare module "@formsflow/components" {
     CustomTabs,
     FormInput,
     FormTextArea,
+    CustomTextArea,
+    CustomCheckbox,
     CustomButton,
     DeleteIcon,
     CopyIcon,
@@ -120,8 +123,12 @@ declare module "@formsflow/components" {
     FORMSFLOW_WEBSITE_URL,
     UsageSummaryCard,
     mapTenantDataToUsage,
+    FileUploadItem,
+    SwitchCard,
     ApplicationLogoFull,
   }: any;
+
+  export type FileUploadStatus = "uploading" | "success" | "error";
 
   export type StyleConfig = {
     background: string;

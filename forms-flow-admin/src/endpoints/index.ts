@@ -23,6 +23,7 @@ const API = {
   USER_ACTIVATION: `${WEB_BASE_URL}/user/<user_id>/status`,
   TENANT_STYLE: `${WEB_BASE_URL}/style`,
   ORGANIZATION_SETTINGS: `${WEB_BASE_URL}/organization-settings`,
+  AI_PERMISSIONS: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenants/<tenant_key>/ai-permissions`,
 };
 
 export default API;
