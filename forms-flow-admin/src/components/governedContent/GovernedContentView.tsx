@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CustomInfo } from "@formsflow/components";
 import { HelperServices } from "@formsflow/service";
 import GovernedContentPreview from "./GovernedContentPreview";
 import RetiredChip from "./RetiredChip";
@@ -61,12 +60,13 @@ const GovernedContentView: React.FC<GovernedContentViewProps> = ({
         {retired && <RetiredChip dataTestId="governed-view-retired" />}
       </div>
 
-      <CustomInfo
-        className="ff-governed-form__notice"
-        variant="primary"
-        content={notice}
-        dataTestId="governed-view-notice"
-      />
+      <div
+        className="ff-governed-alert ff-governed-form__notice"
+        role="status"
+        data-testid="governed-view-notice"
+      >
+        <p className="ff-governed-alert__text">{notice}</p>
+      </div>
 
       <div className="ff-governed-form__layout">
         <dl className="ff-governed-view">

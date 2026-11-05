@@ -291,11 +291,11 @@ const GovernedContentList: React.FC<GovernedContentListProps> = ({
     <div className="ff-governed-list" data-testid="governed-content-table">
       {readOnly && (
         <div
-          className="ff-governed-list__off-notice"
+          className="ff-governed-alert"
           role="status"
           data-testid="governed-content-off-notice"
         >
-          <p className="ff-governed-list__off-text">
+          <p className="ff-governed-alert__text">
             {/* Zero state (REV 4.1) points the way; a library (REV 4.5) says what's locked. */}
             {!loading && records.length === 0
               ? t(

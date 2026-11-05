@@ -19,51 +19,53 @@
   color: var(--gray-darkest);
 }
 
-.ff-governed-list {
-  // Figma REV 4.1 / 4.5 alert (CustomInfo has no slot for a button). Figma
-  // indigo/500 (#8D9AFD) and indigo/50 (#F4F5FF) have no theme variable:
-  // --indigo-200 (#99A4F8) and a 5% indigo tint stand in.
-  &__off-notice {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    min-height: 3.5rem;
-    margin-bottom: 1.5rem;
-    padding: 0.5rem 1rem 0.5rem 2rem;
-    border: 1px solid var(--indigo-200);
-    border-radius: 0.3125rem;
-    background: var(--white-200);
+// Figma alert on the library (REV 4.1 / 4.5) and View block (REV 3.5): no
+// icon, unlike CustomInfo, and room for a button. Figma indigo/500 (#8D9AFD)
+// and indigo/50 (#F4F5FF) have no theme variable: --indigo-200 (#99A4F8) and
+// a 5% indigo tint stand in.
+.ff-governed-alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  border: 1px solid var(--indigo-200);
+  border-radius: 0.3125rem;
+  background: var(--white-200);
 
-    // The alert's CTA: 40px pill, 14px label. Two classes to outrank the
-    // theme's .custom-button.custom-button--primary without !important.
-    .custom-button.custom-button--primary {
-      min-height: 2.5rem;
-      padding: 0 1.5rem;
-      border-color: var(--indigo-200);
-      border-radius: 1.25rem;
-      background-color: color-mix(
-        in srgb,
-        var(--indigo-100) 5%,
-        var(--white-300)
-      );
-      // 14px; the v8 theme redefines --font-size-xs as 10px.
-      font-size: 0.875rem;
-      color: var(--gray-darkest);
-    }
-  }
-
-  // Figma ff/text-style/sans/body-sml-regular, line-height normal.
-  &__off-text {
-    margin: 0;
-    font-family: var(--font-family-base);
+  // The alert's CTA: 40px pill, 14px label. Two classes to outrank the
+  // theme's .custom-button.custom-button--primary without !important.
+  .custom-button.custom-button--primary {
+    min-height: 2.5rem;
+    padding: 0 1.5rem;
+    border-color: var(--indigo-200);
+    border-radius: 1.25rem;
+    background-color: color-mix(
+      in srgb,
+      var(--indigo-100) 5%,
+      var(--white-300)
+    );
+    // 14px; the v8 theme redefines --font-size-xs as 10px.
     font-size: 0.875rem;
-    font-weight: var(--font-weight-regular);
-    line-height: normal;
     color: var(--gray-darkest);
   }
 
+  // Figma ff/text-style/sans/body-sml-regular, line-height normal. Light
+  // weight, as CustomInfo uses: regular renders heavier than the design.
+  &__text {
+    margin: 0;
+    font-family: var(--font-family-base);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+    color: var(--gray-darkest);
+  }
+}
+
+.ff-governed-list {
   &__name {
     display: inline-flex;
     flex-wrap: wrap;
@@ -204,13 +206,13 @@
   }
 }
 
-// Read-only details on View block (REV 3.5).
+// Read-only details on View block (REV 3.5): body-sml-regular, 14px / 20px.
 .ff-governed-view {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   margin: 0;
-  font-size: var(--font-size-xs);
+  font-size: 0.875rem;
   font-weight: var(--font-weight-regular);
   line-height: 1.25rem;
   color: var(--gray-darkest);
