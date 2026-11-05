@@ -23,7 +23,7 @@ COPY . /forms-flow-theme/app/
 RUN npm run build
 
 
-FROM nginx:1.15.2-alpine as production-stage
+FROM nginx:1.31.8-alpine as production-stage
 
 # set label for image
 LABEL Name="formsflow"
