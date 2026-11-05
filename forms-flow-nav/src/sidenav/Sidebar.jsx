@@ -51,6 +51,10 @@ import {
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from "prop-types";
 
+// Written by forms-flow-web (FFF-3): read at start, since the event may come
+// before this menu is mounted.
+const OFFLINE_ATTENTION_KEY = "ff_offline_attention";
+
 // Pure constants hoisted to module scope so they are not rebuilt on every
 // Sidebar render (N.1.3). Values are byte-identical to the previous inline
 // literals — route paths are contracts.
@@ -251,6 +255,15 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const [tenantName, setTenantName] = React.useState("");
   const [applicationTitle, setApplicationTitle] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
+  // FFF-3 (Figma DEV 3.3b): forms from this device that need attention, from
+  // forms-flow-web; a count on Submit (a dot on the collapsed rail).
+  const [offlineAttention, setOfflineAttention] = React.useState(() => {
+    try {
+      return Number(localStorage.getItem(OFFLINE_ATTENTION_KEY)) || 0;
+    } catch (error) {
+      return 0;
+    }
+  });
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
   const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
@@ -456,6 +469,10 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
     props.subscribe("FF_ONBOARDING_DETAILS", () => {
       loadChecklistFromOnboarding();
     });
+
+    props.subscribe("FF_OFFLINE_ATTENTION", (msg, count) => {
+      setOfflineAttention(Number(count) || 0);
+    });
   }, []);
 
   // On successful authentication, load federated login details and integration config
@@ -509,8 +526,17 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const handleProfileModal = () => setShowProfile(true);
   const handleProfileClose = () => setShowProfile(false);
 
+  // Moves to the home page only once the logout goes ahead: a logout
+  // cancelled in the "unsent forms" warning (FFF-3) keeps the current page.
+  // An older @formsflow/service has userLogout() without that step: move first.
   const logout = () => {
-    navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
+    const toHome = () =>
+      navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
+    if (instance.userLogout.length > 0) {
+      instance.userLogout(toHome);
+      return;
+    }
+    toHome();
     instance.userLogout();
   };
 
@@ -734,6 +760,7 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
               mainMenu="Submit"
               subMenu={SUBMIT_SUBMENU}
               collapsed={collapsed}
+              badgeCount={offlineAttention || undefined}
             />
           )}
         </ul>

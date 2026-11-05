@@ -9,6 +9,15 @@ const isEnabled = (v: string | false): boolean =>
 
 export const MULTITENANCY_ENABLED = isEnabled(MULTITENANCY_ENABLED_VARIABLE);
 
+// Offline forms (FFF-3): the env keys that allow the organization switches on
+// Manage -> Organization. With a key off, its switch is hidden.
+export const OFFLINE_ENABLED = isEnabled(
+  window._env_?.REACT_APP_OFFLINE_ENABLED || false
+);
+export const OFFLINE_AUTO_SYNC_ENABLED =
+  OFFLINE_ENABLED &&
+  isEnabled(window._env_?.REACT_APP_OFFLINE_AUTO_SYNC_ENABLED || false);
+
 export const KEYCLOAK_ENABLE_CLIENT_AUTH = isEnabled(
   KEYCLOAK_ENABLE_CLIENT_AUTH_VARIABLE
 );
