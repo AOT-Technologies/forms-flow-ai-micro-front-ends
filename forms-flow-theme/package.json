@@ -24,7 +24,7 @@
     "baseline-browser-mapping": "2.11.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
+    "bootstrap": "^5.3.8",
     "sass": "^1.58.2"
   }
 }
