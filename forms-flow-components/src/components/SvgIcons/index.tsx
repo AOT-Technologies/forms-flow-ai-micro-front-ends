@@ -619,6 +619,32 @@ export const CircleAlertIcon = ({
   </svg>
 );
 
+/** lucide/lock - marks content that cannot be edited (e.g. governed form content). */
+export const LockIcon = ({
+  color = "#7C7D7F",
+  className = "",
+  strokeWidth = 1.5,
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M4.66667 7.33398V4.66732C4.66667 3.78326 5.01786 2.93542 5.64298 2.3103C6.2681 1.68517 7.11595 1.33398 8 1.33398C8.88406 1.33398 9.7319 1.68517 10.357 2.3103C10.9821 2.93542 11.3333 3.78326 11.3333 4.66732V7.33398M3.33333 7.33398H12.6667C13.403 7.33398 14 7.93094 14 8.66732V13.334C14 14.0704 13.403 14.6673 12.6667 14.6673H3.33333C2.59695 14.6673 2 14.0704 2 13.334V8.66732C2 7.93094 2.59695 7.33398 3.33333 7.33398Z"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const AlertCircleIcon = ({ color = baseColor, className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

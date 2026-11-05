@@ -50,6 +50,7 @@ export * from "./CustomComponents/CustomTextArea";
 export * from "./CustomComponents/FileUploadArea";
 export * from "./CustomComponents/FileUploadItem";
 export * from "./CustomComponents/SwitchCard";
+export * from "./CustomComponents/TitledSection";
 export * from "./CustomComponents/UserSelect";
 export * from "./CustomComponents/Alert";
 export * from "./CustomComponents/CustomUrl";

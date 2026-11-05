@@ -23,6 +23,7 @@ export const CloseIcon = makeStub("CloseIcon");
 export const ConfirmModal = makeStub("ConfirmModal");
 export const CopyIcon = makeStub("CopyIcon");
 export const CustomInfo = makeStub("CustomInfo");
+export const CustomRadioButton = makeStub("CustomRadioButton");
 export const CustomSearch = makeStub("CustomSearch");
 export const CustomTabs = makeStub("CustomTabs");
 export const CustomTextInput = makeStub("CustomTextInput");
@@ -30,6 +31,7 @@ export const DeleteIcon = makeStub("DeleteIcon");
 export const DownArrowIcon = makeStub("DownArrowIcon");
 export const FormInput = makeStub("FormInput");
 export const FormTextArea = makeStub("FormTextArea");
+export const PromptModal = makeStub("PromptModal");
 export const ReusableTable = makeStub("ReusableTable");
 // Functional stand-in so tests can toggle it like the real role="switch" button.
 export const Switch = ({ checked = false, onChange, label, dataTestId }) =>
@@ -44,6 +46,34 @@ export const Switch = ({ checked = false, onChange, label, dataTestId }) =>
       onClick: () => onChange?.(!checked),
     },
     label
+  );
+// Mirrors the real card's test ids: "<dataTestId>-switch" on the switch (which
+// carries the label) and "<dataTestId>-description" on the description.
+export const SwitchCard = ({
+  checked = false,
+  onChange,
+  label,
+  description,
+  dataTestId,
+}) =>
+  React.createElement(
+    "div",
+    null,
+    React.createElement(Switch, {
+      checked,
+      onChange,
+      label,
+      dataTestId: dataTestId ? `${dataTestId}-switch` : undefined,
+    }),
+    description
+      ? React.createElement(
+          "p",
+          {
+            "data-testid": dataTestId ? `${dataTestId}-description` : undefined,
+          },
+          description
+        )
+      : null
   );
 // Functional stand-ins mirroring the real DOM contract: one checkbox per item with
 // test id "<dataTestId>-inline-checkbox-<n>", and a textarea whose id is
@@ -103,3 +133,4 @@ export const CustomTextArea = ({
   });
 export const UpArrowIcon = makeStub("UpArrowIcon");
 export const V8CustomButton = makeStub("V8CustomButton");
+export const V8CustomDropdownButton = makeStub("V8CustomDropdownButton");
