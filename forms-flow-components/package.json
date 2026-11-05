@@ -23,7 +23,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@formio/bootstrap3": "^2.12.3",
-    "@formio/core": "^2.4.0",
+    "@formio/core": "^2.9.0",
     "@formio/semantic": "^2.6.1",
     "@mui/material": "^7.3.2",
     "@mui/x-data-grid": "^8.12.1",
