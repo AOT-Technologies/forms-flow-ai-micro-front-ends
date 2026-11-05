@@ -6,8 +6,9 @@
 #   patch-only-safe  ONE grouped PR across all npm packages, patch bumps only.
 #                    Title: "Bump the patch-only-safe group across N directories
 #                    with M updates" → badge [✅ PATCH-ONLY]. One review pass, merge.
-#   minor / major    Individual PRs (one per dependency per package) → badges
-#                    [🟡 MINOR] / [🔴 MAJOR]. Reviewed deliberately.
+#   minor / major    ONE PR per dependency, spanning every package that uses it
+#                    (group `one-pr-per-dependency`) → badges [🟡 MINOR] /
+#                    [🔴 MAJOR]. Reviewed deliberately, merged once.
 #   security-fixes   ONE grouped PR for Dependabot security updates →
 #                    badge [🔒 SECURITY]. Always on the default branch.
 #
@@ -93,16 +94,21 @@ updates:
         patterns:
           - "*"
 
-      # Minor and major bumps match no version-update group on purpose, so
-      # Dependabot raises them as individual pull requests.
-      #
-      # Optional (undocumented combination — test on a branch before relying
-      # on it): collapse "same dependency, N packages" minor bumps into one PR:
-      #
-      #   minor-per-dependency:
-      #     applies-to: "version-updates"
-      #     update-types: ["minor"]
-      #     group-by: "dependency-name"
+      # ---- Everything else (minor + major): ONE PR per dependency ------------
+      # Groups match in order, so patches are already taken by patch-only-safe.
+      # Without this group Dependabot raised one PR per dependency PER
+      # DIRECTORY (8 packages × 8 dependencies = 46 PRs on the first run).
+      # `group-by: dependency-name` collapses that to one PR per dependency
+      # that touches every directory using it. Title shape:
+      # "Bump <dep> in the one-pr-per-dependency group across N directories".
+      # Note: GitHub documents group-by on its own; this combination with a
+      # preceding update-types group is validated by the first Dependabot run
+      # (errors show in Insights → Dependency graph → Dependabot).
+      one-pr-per-dependency:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        group-by: "dependency-name"
 
   # ===========================================================================
   # Docker — base images of the 8 package Dockerfiles (node / nginx).
@@ -134,6 +140,13 @@ updates:
           - "*"
         update-types:
           - "patch"
+      # One PR per image across all 8 Dockerfiles (e.g. one `node` PR, one
+      # `nginx` PR) instead of one per Dockerfile.
+      docker-one-pr-per-dependency:
+        applies-to: "version-updates"
+        patterns:
+          - "*"
+        group-by: "dependency-name"
 
   # ===========================================================================
   # GitHub Actions — pins in .github/workflows (checkout, setup-node, aws, ...).
