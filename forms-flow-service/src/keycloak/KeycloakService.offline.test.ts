@@ -65,7 +65,9 @@ let mockOrgOffline = true;
   Promise.resolve({
     ok: true,
     json: () =>
-      Promise.resolve({ offline: { enabled: mockOrgOffline, autoSync: false } }),
+      Promise.resolve({
+        offline: { enabled: mockOrgOffline, autoSync: false },
+      }),
   })
 );
 const keepOrgSwitch = (on: boolean) =>
@@ -385,7 +387,9 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
 
   test("a guard that says no cancels the logout and keeps everything", async () => {
     (global as any).localStorage.setItem("AUTH_TOKEN", "x");
-    const remove = KeycloakService.registerLogoutGuard(() => Promise.resolve(false));
+    const remove = KeycloakService.registerLogoutGuard(() =>
+      Promise.resolve(false)
+    );
 
     onlineInstance().userLogout();
     await flush();
@@ -428,8 +432,61 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     await flush();
 
     expect(mockKc.logout).not.toHaveBeenCalled();
-    expect((global as any).window.location.assign).toHaveBeenCalledWith("http://localhost:3000/");
-    expect((global as any).localStorage.getItem("ff_offline_session")).toBeNull();
+    expect((global as any).window.location.assign).toHaveBeenCalledWith(
+      "http://localhost:3000/"
+    );
+    expect(
+      (global as any).localStorage.getItem("ff_offline_session")
+    ).toBeNull();
+    // Keycloak could not be reached: the next online start ends that sign-in.
+    expect((global as any).localStorage.getItem("ff_offline_logout_due")).toBe(
+      "1"
+    );
+  });
+
+  const END_SESSION =
+    "http://kc/realms/realm/protocol/openid-connect/logout?client_id=forms-flow-web" +
+    "&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F";
+
+  test("started offline, online at logout: also ends the Keycloak sign-in", async () => {
+    keepOrgSwitch(true);
+    savePass();
+    mockConnectivity.check.mockResolvedValue(false);
+    (global as any).window.location.assign = jest.fn();
+    const service = freshInstance();
+    service.initKeycloak(jest.fn(), jest.fn());
+    await flush();
+
+    mockConnectivity.check.mockResolvedValue(true);
+    service.userLogout();
+    await flush();
+
+    expect((global as any).window.location.assign).toHaveBeenCalledWith(
+      END_SESSION
+    );
+    expect(
+      (global as any).localStorage.getItem("ff_offline_session")
+    ).toBeNull();
+    expect(
+      (global as any).localStorage.getItem("ff_offline_logout_due")
+    ).toBeNull();
+  });
+
+  test("a logout still due: the next online start ends that sign-in before check-sso", async () => {
+    (global as any).localStorage.setItem("ff_offline_logout_due", "1");
+    mockConnectivity.check.mockResolvedValue(true);
+    (global as any).window.location.assign = jest.fn();
+
+    freshInstance().initKeycloak(jest.fn(), jest.fn());
+    await flush();
+
+    expect((global as any).window.location.assign).toHaveBeenCalledWith(
+      END_SESSION
+    );
+    expect(mockKc.init).not.toHaveBeenCalled();
+    expect(
+      (global as any).localStorage.getItem("ff_offline_logout_due")
+    ).toBeNull();
   });
 
   test("the before-logout step runs only when the logout goes ahead", async () => {
@@ -462,7 +519,9 @@ describe("KeycloakService sign-in retry", () => {
   test("a failed init gets a fresh Keycloak object, so 'Try again' can init again", async () => {
     // keycloak-js allows init() once per object, even after a failure.
     const Keycloak = require("keycloak-js");
-    mockKc.init.mockRejectedValue(new Error("Timeout when waiting for 3rd party check iframe message."));
+    mockKc.init.mockRejectedValue(
+      new Error("Timeout when waiting for 3rd party check iframe message.")
+    );
     const service = freshInstance();
     const created = Keycloak.mock.calls.length;
 

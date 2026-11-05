@@ -100,14 +100,76 @@ class KeycloakService {
   private logout(): void {
     if (!this.kcInitialized) {
       // Started offline (FFF-3): keycloak-js can only log out after init(),
-      // so clear the session here and restart the app (it asks for a sign-in).
+      // so clear the session here. The Keycloak sign-in (its session cookie)
+      // must end too, or the next online start signs the same user in again:
+      // online, go to Keycloak's logout now; offline, leave a note so the
+      // next online start does it before any sign-in.
       StorageService.clear();
       this.token = undefined;
-      window.location.assign(`${window.location.origin}/`);
+      ConnectivityService.check()
+        .catch(() => false)
+        .then((online) => {
+          if (online) {
+            window.location.assign(this.endSessionUrl());
+            return;
+          }
+          KeycloakService.markServerLogoutDue();
+          window.location.assign(`${window.location.origin}/`);
+        });
       return;
     }
     this.kc?.logout();
     StorageService.clear();
+  }
+
+  /** The note "end the Keycloak sign-in too" (written after the clean-up). */
+  private static readonly SERVER_LOGOUT_DUE = "ff_offline_logout_due";
+
+  private static markServerLogoutDue(): void {
+    try {
+      localStorage.setItem(KeycloakService.SERVER_LOGOUT_DUE, "1");
+    } catch {
+      // No storage: the Keycloak session ends by its own idle limit.
+    }
+  }
+
+  /** True once when a logout while offline still has to end the Keycloak sign-in. */
+  private static takeServerLogoutDue(): boolean {
+    try {
+      const due =
+        localStorage.getItem(KeycloakService.SERVER_LOGOUT_DUE) === "1";
+      if (due) localStorage.removeItem(KeycloakService.SERVER_LOGOUT_DUE);
+      return due;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Keycloak's logout address (end-session endpoint), built from the config:
+   * keycloak-js knows its addresses only after init(), which an offline start
+   * never ran. Without an ID token Keycloak may ask "Do you want to log out?".
+   */
+  private endSessionUrl(): string {
+    const {
+      url = "",
+      realm = "",
+      clientId = "",
+    } = (this._keycloakConfig ?? {}) as {
+      url?: string;
+      realm?: string;
+      clientId?: string;
+    };
+    const base = `${String(url).replace(
+      /\/+$/,
+      ""
+    )}/realms/${encodeURIComponent(realm)}`;
+    const back = `${window.location.origin}/`;
+    return (
+      `${base}/protocol/openid-connect/logout` +
+      `?client_id=${encodeURIComponent(clientId)}` +
+      `&post_logout_redirect_uri=${encodeURIComponent(back)}`
+    );
   }
 
   /**
@@ -309,6 +371,12 @@ class KeycloakService {
     callback: (authenticated) => void,
     onError?: (error: unknown) => void
   ): void {
+    if (KeycloakService.takeServerLogoutDue()) {
+      // A logout while offline could not reach Keycloak: end that sign-in
+      // first, before check-sso would sign the same user in again.
+      window.location.assign(this.endSessionUrl());
+      return;
+    }
     this.kc
       ?.init(this.keycloakInitConfig)
       .then((authenticated) => {
@@ -356,7 +424,8 @@ class KeycloakService {
             // Notice a lost connection at once, not only at the next token
             // refresh (FFF-3 offline). Also started by loadOfflineSettings()
             // when the organization turns offline forms on.
-            if (OfflineSettingsService.isOfflineAllowed()) this.watchConnectivity();
+            if (OfflineSettingsService.isOfflineAllowed())
+              this.watchConnectivity();
           } else {
             this.logout();
           }
