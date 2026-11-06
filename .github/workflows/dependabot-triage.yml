@@ -7,9 +7,11 @@
 #   Tier            Title badge          Label
 #   --------------  -------------------  -----------------------------------
 #   patch group     [✅ PATCH-ONLY]      deps: patch ✅ one-pass review
-#   minor           [🟡 MINOR]           deps: minor 🟡
-#   major           [🔴 MAJOR]           deps: major 🔴 breaking-risk
+#   batch (minor)   [🟡 MINOR]           deps: minor 🟡
+#   batch (major)   [🔴 MAJOR]           deps: major 🔴 breaking-risk
 #   security group  [🔒 SECURITY]        deps: security 🔒
+#
+#   The minor/major batch PR is badged by the highest bump inside it.
 #
 # What it does (idempotent, safe to re-run on every rebase/recreate):
 #   1. Reads Dependabot metadata (update type, group, directories, deps).
@@ -63,7 +65,8 @@ jobs:
   # ---------------------------------------------------------------------------
   bootstrap-labels:
     if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     permissions:
       issues: write # create/update repo labels
     steps:
@@ -95,7 +98,8 @@ jobs:
   # ---------------------------------------------------------------------------
   triage:
     if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       issues: write # create missing tier labels
       pull-requests: write # labels, title, sticky comment on the PR
@@ -206,13 +210,13 @@ jobs:
           case "$TIER" in
             patch)
               badge="![patch-only](https://img.shields.io/badge/dependabot-patch--only%20%E2%9C%85-0E8A16)"
-              checklist=$'- [ ] All CI checks green (components / review / submissions suites)\n- [ ] Only `package.json` ranges and `package-lock.json` files changed (no source files)\n- [ ] No new peer-dependency warnings in the CI install log\n- [ ] Merge' ;;
+              checklist=$'- [ ] CI green: `forms-flow-components-CI`, `forms-flow-review-CI`, `forms-flow-submissions-CI` (path-filtered; a package without a suite gets no check)\n- [ ] Diff limited to `package.json` ranges and `package-lock.json` in the touched packages (Dockerfile / workflow pins for the docker and actions groups); no source files\n- [ ] No new peer-dependency warnings in the CI install log\n- [ ] Merge' ;;
             minor)
               badge="![minor](https://img.shields.io/badge/dependabot-minor%20%F0%9F%9F%A1-FBCA04)"
-              checklist=$'- [ ] Read the release notes for new behaviour / deprecations\n- [ ] CI green for every package touched\n- [ ] Local smoke-test of the affected package (`npm start`) if it is UI-facing\n- [ ] Does NOT align the intentional version drift (jest / eslint / i18next) between packages' ;;
+              checklist=$'- [ ] Release notes read for every dependency in the batch (new behaviour / deprecations)\n- [ ] `package.json` and `package-lock.json` both updated for every entry in the batch\n- [ ] CI green for every package touched; local smoke-test (`npm start`) of UI-facing packages\n- [ ] Does NOT align the intentional version drift (jest / eslint / i18next) between packages\n- [ ] Not ready for one entry? `@dependabot ignore <dependency> minor version` on it; the batch is recreated without it' ;;
             major)
               badge="![major](https://img.shields.io/badge/dependabot-major%20%F0%9F%94%B4-B60205)"
-              checklist=$'- [ ] Migration guide read; breaking changes listed in this PR\n- [ ] Cross-repo impact checked (`@formsflow/*` externals are consumed by forms-flow-web)\n- [ ] CI green + manual regression of the affected package\n- [ ] Not planned? Decline with `@dependabot ignore this major version` (policy-frozen libraries are listed in DEPENDABOT.md)' ;;
+              checklist=$'- [ ] Migration guide read for every dependency in the batch; breaking changes listed in this PR\n- [ ] `package.json` and `package-lock.json` both updated for every entry in the batch\n- [ ] Cross-repo impact checked (`@formsflow/*` externals are consumed by forms-flow-web)\n- [ ] CI green + manual regression of every package touched\n- [ ] Not ready for one entry? `@dependabot ignore <dependency> major version` on it; the batch is recreated without it (policy-frozen libraries are listed in DEPENDABOT.md)' ;;
             security)
               badge="![security](https://img.shields.io/badge/dependabot-security%20%F0%9F%94%92-5319E7)"
               checklist=$'- [ ] Confirm the advisory applies to our usage\n- [ ] CI green\n- [ ] Merge promptly; this takes priority over version-update PRs' ;;
@@ -237,7 +241,7 @@ jobs:
           **Review checklist**
           $checklist
 
-          <sub>Managed by \`.github/workflows/dependabot-triage.yml\`. Commands: \`@dependabot rebase\` · \`@dependabot recreate\` · \`@dependabot ignore this minor version\` · \`@dependabot ignore this major version\`.</sub>
+          <sub>Managed by \`.github/workflows/dependabot-triage.yml\`. Commands: \`@dependabot rebase\` · \`@dependabot recreate\` · \`@dependabot ignore <dependency> minor version\` · \`@dependabot ignore <dependency> major version\` · \`@dependabot show <dependency> ignore conditions\`.</sub>
           MD
           )
           existing_id=$(gh api "repos/$GH_REPO/issues/$PR/comments" --paginate \
@@ -257,7 +261,8 @@ jobs:
   automerge-patch:
     needs: triage
     if: needs.triage.outputs.tier == 'patch' && vars.DEPENDABOT_AUTOMERGE_PATCH == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     permissions:
       contents: write # required to merge
       pull-requests: write # required to enable auto-merge
