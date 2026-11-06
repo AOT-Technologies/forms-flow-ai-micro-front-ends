@@ -226,7 +226,8 @@ every change needs a measurable engineering benefit.
   forms-flow-web) · `npm test` / `coverage` · `npm run analyze`.
 - Local all-at-once dev: `./start-mfes.sh` (macOS + VS Code; does NOT include
   integration — start it manually on 3009). CI: per-package path-filtered workflows,
-  Node 20, `npm ci --force`, tests only (components/review/submissions); PRs target
+  Node 24.21.0 (pinned in `.nvmrc`, Dockerfiles and workflows — bump all three
+  together), `npm ci --force`, tests only (components/review/submissions); PRs target
   `develop`.
 
 | Package | Port | Stack notes |

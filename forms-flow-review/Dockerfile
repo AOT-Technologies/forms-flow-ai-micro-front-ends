@@ -1,5 +1,5 @@
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:24.21.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-review/app
@@ -16,11 +16,11 @@ RUN apk update && apk upgrade && \
 COPY package-lock.json /forms-flow-review/app/package-lock.json
 COPY package.json /forms-flow-review/app/package.json
 
-RUN npm install
+RUN npm ci --force
 
 # Copy only necessary files
 COPY src/ /forms-flow-review/app/src/
-COPY webpack.config.js tsconfig.json babel.config.json jest.config.js /forms-flow-review/app/
+COPY webpack.config.js webpack.formio.js tsconfig.json babel.config.json jest.config.js /forms-flow-review/app/
  
 RUN npm run build:webpack
 
