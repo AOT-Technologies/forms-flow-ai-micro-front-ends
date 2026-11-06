@@ -26,9 +26,12 @@ import {
   DEFAULT_AI_PERMISSIONS,
   fromTenantData,
 } from "./AiPermissionsSection";
+import { GovernedContentSettingSection } from "./GovernedContentSettingSection";
+import { isGovernedContentOn } from "../governedContent/governedSetting";
 import API from "../../endpoints";
 import { updateAiPermissions } from "../../services/organization";
 import {
+  MANAGE_GOVERNED_CONTENT,
   MULTITENANCY_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
@@ -179,6 +182,15 @@ const Organization: React.FC<any> = (props) => {
   }, []);
   const isOrganizationManager = userRoles.includes("manage_organization");
   const showAiSettings = isAiAssistantFeatureEnabled() && isOrganizationManager;
+  // The setting lives on the tenant record, so single-tenant has no switch.
+  const showGovernedContentSetting =
+    MULTITENANCY_ENABLED &&
+    isOrganizationManager &&
+    userRoles.includes(MANAGE_GOVERNED_CONTENT);
+  const refreshTenant = useCallback(
+    () => setTenantRefreshCount((count) => count + 1),
+    []
+  );
 
   // Refreshes the cached tenant record. The home page reads the same storage keys, so this
   // effect is kept even though the subscription summary it used to feed has been replaced.
@@ -272,6 +284,21 @@ const Organization: React.FC<any> = (props) => {
               onChange={setAiPermissions}
               onSave={saveAiPermissions}
               saving={savingAiPermissions}
+            />
+          </section>
+        )}
+
+        {showGovernedContentSetting && (
+          <section className="organization-section">
+            <div className="organization-section-header organization-section-header--static">
+              <h3 className="organization-section-title">
+                {t("Governed Content")}
+              </h3>
+            </div>
+            <GovernedContentSettingSection
+              tenantKey={tenantKey}
+              enabled={isGovernedContentOn(tenantData)}
+              onSaved={refreshTenant}
             />
           </section>
         )}

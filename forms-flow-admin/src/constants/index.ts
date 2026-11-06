@@ -17,6 +17,8 @@ export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 
 export const ADMIN_ROLE = "formsflow-admin";
 
+export const MANAGE_GOVERNED_CONTENT = "manage_governed_content";
+
 export const URL_UPGRADE = window._env_?.REACT_APP_URL_UPGRADE || "";
 export const URL_CONTACT_SALES =
   window._env_?.REACT_APP_URL_CONTACT_SALES || "";

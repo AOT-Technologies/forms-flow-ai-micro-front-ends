@@ -40,6 +40,11 @@ $hint-color: #979899; // Figma gray/500; nearest token is --gray-medium-darker (
     margin-bottom: $section-spacing;
   }
 
+  // Placement only - the card styles itself from the shared theme (v8-scss/_switchCard).
+  .governed-content-setting {
+    margin-top: 1.31rem;
+  }
+
   .ai-permissions {
     display: flex;
     flex-direction: column;

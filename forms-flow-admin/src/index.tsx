@@ -8,7 +8,7 @@ import {
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
-import { MULTITENANCY_ENABLED } from "./constants";
+import { MANAGE_GOVERNED_CONTENT, MULTITENANCY_ENABLED } from "./constants";
 import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
@@ -40,13 +40,15 @@ const Admin = React.memo(({ props }: any) => {
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
   const isAppStylingManager = userRoles?.includes("manage_app_styling");
+  const isGovernedContentManager = userRoles?.includes(MANAGE_GOVERNED_CONTENT);
   // const isLinkManager = userRoles.includes("manage_links");
   const isAdmin =
     isDashboardManager ||
     isRoleManager ||
     isUserManager ||
     isOrganizationManager ||
-    isAppStylingManager;
+    isAppStylingManager ||
+    isGovernedContentManager;
   const location = useLocation().pathname;
   const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
@@ -134,9 +136,11 @@ const Admin = React.memo(({ props }: any) => {
       (location === "/admin/roles" && !isRoleManager) ||
       (location === "/admin/users" && !isUserManager) ||
       (location === "/admin/appearance" && !isAppStylingManager) ||
+      (location.startsWith("/admin/content") && !isGovernedContentManager) ||
       !(
         isOrganizationManager ||
         isAppStylingManager ||
+        isGovernedContentManager ||
         isDashboardManager ||
         isRoleManager ||
         isUserManager
@@ -168,6 +172,18 @@ const Admin = React.memo(({ props }: any) => {
                   />
                   <Route
                     path=":tab"
+                    element={
+                      <Manage
+                        props={props}
+                        setTab={setPage}
+                        setDashboardCount={setDashboardCount}
+                        setRoleCount={setRoleCount}
+                        setUserCount={setUserCount}
+                      />
+                    }
+                  />
+                  <Route
+                    path="content/:blockId"
                     element={
                       <Manage
                         props={props}

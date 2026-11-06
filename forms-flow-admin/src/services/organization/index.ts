@@ -4,6 +4,16 @@ import { RequestService } from "@formsflow/service";
 import API from "../../endpoints/index";
 import { AiPermissionsPayload } from "../../components/organization/AiPermissionsSection";
 
+// Turns governed content on or off for the tenant (REV 4.4 / 4.6).
+export const updateGovernedContentSetting = (
+  tenantKey: string,
+  enabled: boolean
+): Promise<unknown> =>
+  RequestService.httpPUTRequest(
+    API.GOVERNED_CONTENT_SETTING.replace("<tenant_key>", tenantKey),
+    { enabled }
+  );
+
 export const updateAiPermissions = (
   tenantKey: string,
   data: AiPermissionsPayload,
