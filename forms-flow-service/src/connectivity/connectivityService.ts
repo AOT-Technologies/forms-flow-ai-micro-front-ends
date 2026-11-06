@@ -19,7 +19,24 @@ export interface ConnectionSample {
 }
 type SampleListener = (sample: ConnectionSample) => void;
 
-const PROBE_TIMEOUT_MS = 2000;
+// How long one HEAD /checkpoint may take before it counts as failed. It must
+// be longer than the slowest network we still want to call "online": 3G adds
+// about 2 s to every request, so the old fixed 2 s made 3G look offline.
+// Env key REACT_APP_OFFLINE_NETWORK_PROBE_TIMEOUT_MS; 6 s if not set.
+const DEFAULT_PROBE_TIMEOUT_MS = 6000;
+
+/** A positive number from `window._env_[key]`, or `fallback`. */
+export const positiveFromEnv = (key: string, fallback: number): number => {
+  const env = (typeof window !== "undefined" && (window as any)._env_) || {};
+  const value = Number(env[key]);
+  return Number.isFinite(value) && value > 0 ? value : fallback;
+};
+
+export const getProbeTimeoutMs = (): number =>
+  positiveFromEnv(
+    "REACT_APP_OFFLINE_NETWORK_PROBE_TIMEOUT_MS",
+    DEFAULT_PROBE_TIMEOUT_MS
+  );
 // While offline, check again this often (FFF-3: 10 s, decided 19 Oct).
 const OFFLINE_RECHECK_MS = 10000;
 // A failed probe while online is tried once more after this wait.
@@ -133,7 +150,7 @@ class ConnectivityService {
     }
     const controller =
       typeof AbortController === "undefined" ? null : new AbortController();
-    const timeout = setTimeout(() => controller?.abort(), PROBE_TIMEOUT_MS);
+    const timeout = setTimeout(() => controller?.abort(), getProbeTimeoutMs());
     try {
       const response = await fetch(`${WEB_BASE_URL}/checkpoint`, {
         method: "HEAD",

@@ -208,4 +208,93 @@ describe("ConnectivityService", () => {
     expect(service.isOnline()).toBe(true);
     expect(changes).toEqual([false, true]);
   });
+
+  // A server that answers after `ms`, and gives up when the probe aborts.
+  const answerAfter = (ms: number) =>
+    mockFetch.mockImplementation(
+      (_url: string, init: any) =>
+        new Promise((resolve, reject) => {
+          const timer = setTimeout(() => resolve({ ok: true }), ms);
+          init?.signal?.addEventListener("abort", () => {
+            clearTimeout(timer);
+            reject(new DOMException("Aborted", "AbortError"));
+          });
+        })
+    );
+
+  test("a slow 3G answer (2.5 s) still counts as online, with its real time", async () => {
+    answerAfter(2500);
+    const service = loadService();
+    const samples: any[] = [];
+    service.subscribeSamples((sample: any) => samples.push(sample));
+
+    const result = service.check();
+    await jest.advanceTimersByTimeAsync(2500);
+
+    await expect(result).resolves.toBe(true);
+    expect(service.isOnline()).toBe(true);
+    expect(samples).toEqual([{ ok: true, ms: 2500, source: "probe" }]);
+  });
+
+  test("an answer slower than the wait counts as failed (6 s by default)", async () => {
+    answerAfter(7000);
+    const service = loadService();
+    const samples: any[] = [];
+    service.subscribeSamples((sample: any) => samples.push(sample));
+
+    const result = service.check();
+    await jest.advanceTimersByTimeAsync(6000); // first try gives up
+    expect(samples).toEqual([{ ok: false, ms: 6000, source: "probe" }]);
+    await jest.advanceTimersByTimeAsync(3000 + 6000); // second try gives up
+
+    await expect(result).resolves.toBe(false);
+    expect(service.isOnline()).toBe(false);
+  });
+
+  test("the env key sets the wait", async () => {
+    setProbeTimeoutEnv("2000");
+    try {
+      answerAfter(2500);
+      const service = loadService();
+      const samples: any[] = [];
+      service.subscribeSamples((sample: any) => samples.push(sample));
+
+      service.check();
+      await jest.advanceTimersByTimeAsync(2000);
+      expect(samples).toEqual([{ ok: false, ms: 2000, source: "probe" }]);
+    } finally {
+      setProbeTimeoutEnv(undefined);
+    }
+  });
 });
+
+describe("getProbeTimeoutMs", () => {
+  const load = () => {
+    let fn: any;
+    jest.isolateModules(() => {
+      fn = require("./connectivityService").getProbeTimeoutMs;
+    });
+    return fn;
+  };
+
+  afterEach(() => setProbeTimeoutEnv(undefined));
+
+  test("6000 by default, the env value when it is a positive number", () => {
+    const getProbeTimeoutMs = load();
+    expect(getProbeTimeoutMs()).toBe(6000);
+    setProbeTimeoutEnv("8000");
+    expect(getProbeTimeoutMs()).toBe(8000);
+    setProbeTimeoutEnv("nonsense");
+    expect(getProbeTimeoutMs()).toBe(6000);
+    setProbeTimeoutEnv("0");
+    expect(getProbeTimeoutMs()).toBe(6000);
+  });
+});
+
+// Sets (or, with undefined, removes) the probe wait env key.
+function setProbeTimeoutEnv(value: string | undefined) {
+  const env = (global as any).window._env_;
+  const key = "REACT_APP_OFFLINE_NETWORK_PROBE_TIMEOUT_MS";
+  if (value === undefined) delete env[key];
+  else env[key] = value;
+}
