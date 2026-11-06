@@ -245,10 +245,29 @@ describe("ConnectivityService", () => {
     const result = service.check();
     await jest.advanceTimersByTimeAsync(6000); // first try gives up
     expect(samples).toEqual([{ ok: false, ms: 6000, source: "probe" }]);
-    await jest.advanceTimersByTimeAsync(3000 + 6000); // second try gives up
+    // The second try starts at once (3 s have passed already) and gives up
+    // too: offline after 12 s, not 6 + 3 + 6 = 15 s.
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    await jest.advanceTimersByTimeAsync(5999);
+    expect(service.isOnline()).toBe(true); // not yet
+    await jest.advanceTimersByTimeAsync(1);
 
     await expect(result).resolves.toBe(false);
     expect(service.isOnline()).toBe(false);
+  });
+
+  test("a quick failure still waits 3 s before the second try", async () => {
+    answerAfter(100); // from the second call on
+    mockFetch.mockRejectedValueOnce(new TypeError("Failed to fetch")); // 1st
+    const service = loadService();
+
+    const result = service.check();
+    await jest.advanceTimersByTimeAsync(2999);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    await jest.advanceTimersByTimeAsync(1);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    await jest.advanceTimersByTimeAsync(100);
+    await expect(result).resolves.toBe(true);
   });
 
   test("the env key sets the wait", async () => {

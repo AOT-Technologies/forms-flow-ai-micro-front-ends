@@ -39,7 +39,9 @@ export const getProbeTimeoutMs = (): number =>
   );
 // While offline, check again this often (FFF-3: 10 s, decided 19 Oct).
 const OFFLINE_RECHECK_MS = 10000;
-// A failed probe while online is tried once more after this wait.
+// A failed probe while online is tried once more, this long after the first
+// one STARTED: 3 s after a quick failure, at once after a timeout (the time
+// has passed already). Worst case to "offline": 2 × the probe wait (12 s).
 const SECOND_PROBE_AFTER_MS = 3000;
 // After an API call fails with no answer, probe at most this often.
 const NETWORK_ERROR_PROBE_GAP_MS = 5000;
@@ -84,11 +86,13 @@ class ConnectivityService {
    * ("unstable"). The browser's own "offline" never waits.
    */
   private static async checkTwiceIfOnline(): Promise<boolean> {
+    const firstStartedAt = Date.now();
     if (await this.timedProbe()) return true;
     const browserOffline =
       typeof navigator !== "undefined" && navigator.onLine === false;
     if (!this.online || browserOffline) return false;
-    await new Promise((resolve) => setTimeout(resolve, SECOND_PROBE_AFTER_MS));
+    const wait = SECOND_PROBE_AFTER_MS - (Date.now() - firstStartedAt);
+    if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
     return this.timedProbe();
   }
 
