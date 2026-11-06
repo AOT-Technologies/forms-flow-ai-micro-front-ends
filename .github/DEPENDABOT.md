@@ -48,7 +48,7 @@ refreshed on every rebase; the PR body is left alone because PR-Agent rewrites i
 |---|---|
 | Security fixes | The moment an alert with a fix is raised. Schedule and cooldown do not apply. |
 | npm: patch group and batch | Daily, 09:00 IST. |
-| Docker base images, GitHub Actions | Thursday, 09:00 IST. |
+| Docker base images, GitHub Actions | Monday, 09:00 IST. |
 
 At most three open Dependabot PRs per ecosystem: security, patch, batch
 (docker has no security alerts, so two). An open group PR is updated in place,

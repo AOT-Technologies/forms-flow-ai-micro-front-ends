@@ -139,7 +139,7 @@ updates:
       - "/forms-flow-theme"
     schedule:
       interval: "weekly"
-      day: "thursday"
+      day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
@@ -169,7 +169,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "thursday"
+      day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 3
