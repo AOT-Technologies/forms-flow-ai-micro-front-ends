@@ -1,21 +1,22 @@
 # Dependabot runbook
 
-How dependency updates arrive in this repo, what each badge means, and the
-one-pass routine for the grouped patch PR.
+Security first. A Dependabot security fix gets its own PR the moment an alert
+has a fix, ahead of the schedule, and is merged before anything else. Patch
+bumps arrive as one grouped PR that takes a single review pass. Everything
+else (minor and major) arrives as one batch PR per ecosystem, badged by the
+highest bump inside it and reviewed entry by entry.
 
 ## Review tiers
 
 | Badge in title | Label | What it is | Routine |
 |---|---|---|---|
+| `[🔒 SECURITY]` | `deps: security 🔒` | **One** grouped PR for Dependabot security updates (`security-fixes` group), opened as soon as a fix exists. | Priority over everything else. CI green → merge. |
 | `[✅ PATCH-ONLY]` | `deps: patch ✅ one-pass review` | **One** grouped PR with every patch-level bump across all packages (`Bump the patch-only-safe group across N directories with M updates`). | CI green → lockfiles-only diff → merge. One pass. |
-| `[🟡 MINOR]` | `deps: minor 🟡` | One PR per dependency, minor bump, spanning every package that uses it (`one-pr-per-dependency` group). | Read release notes, CI green, smoke-test if UI-facing. |
-| `[🔴 MAJOR]` | `deps: major 🔴 breaking-risk` | One PR per dependency, major bump, spanning every package that uses it. | Migration guide, cross-repo impact, manual regression. Or `@dependabot ignore this major version`. |
-| `[🔒 SECURITY]` | `deps: security 🔒` | **One** grouped PR for Dependabot security updates (`security-fixes` group). | Priority over everything else. CI green → merge. |
+| `[🟡 MINOR]` or `[🔴 MAJOR]` | `deps: minor 🟡` or `deps: major 🔴 breaking-risk` | **One** batch PR per ecosystem with every remaining minor and major bump (`minor-and-major`, `docker-minor-and-major`), badged by its highest bump. | Per entry: release notes or migration guide, CI green, smoke-test. Not ready? `@dependabot ignore <dependency> major version` (or `minor`) drops it; the batch is recreated without it. |
 
-Every Dependabot PR also gets a sticky comment with a shields badge, the
-metadata (highest bump, group, directories, dependencies) and the checklist for
-its tier. The comment is refreshed on every rebase; the PR body is left alone
-because PR-Agent rewrites it.
+Every Dependabot PR also gets a sticky comment: shields badge, metadata
+(highest bump, group, directories, dependencies) and the tier checklist. It is
+refreshed on every rebase; the PR body is left alone because PR-Agent rewrites it.
 
 ## Where things live
 
@@ -41,12 +42,17 @@ because PR-Agent rewrites it.
      `DEPENDABOT_AUTOMERGE_PATCH` = `true`.
    Until that variable exists, nothing merges on its own.
 
-## Weekly cadence
+## Cadence
 
-Thursday 09:00 IST for npm, docker and GitHub Actions. Dependabot opens the
-patch group plus one PR per dependency that has a minor or major available.
-`open-pull-requests-limit` is applied per directory in a multi-directory
-config, so grouping, not the limit, is what keeps the count down.
+| What | When |
+|---|---|
+| Security fixes | The moment an alert with a fix is raised. Schedule and cooldown do not apply. |
+| npm: patch group and batch | Daily, 09:00 IST. |
+| Docker base images, GitHub Actions | Monday, 09:00 IST. |
+
+At most three open Dependabot PRs per ecosystem: security, patch, batch
+(docker has no security alerts, so two). An open group PR is updated in place,
+so a new entry joins the existing PR rather than opening another one.
 
 To refresh on demand: **Insights → Dependency graph → Dependabot → Check for
 updates** (per ecosystem). Config errors show on the same page.
@@ -72,21 +78,23 @@ missed. Some majors are still frozen by policy (see the Hard Constraints in
 intentional `jest`/`eslint`/`i18next` drift between packages, and the heavy
 shared-bundle libraries (`@aot-technologies/formio*`, `@mui/*`, `bpmn-js`).
 
-When one of those arrives as `[🔴 MAJOR]` and is not planned, decline it on the
-PR with `@dependabot ignore this major version`. Dependabot remembers that per
-dependency and stops re-opening it; `@dependabot unignore` reverses it.
+When one of those shows up in the `[🔴 MAJOR]` batch and is not planned, drop
+it with `@dependabot ignore <dependency> major version`. Dependabot closes the
+batch, remembers the condition per dependency and recreates the batch without
+it on the next run; `@dependabot unignore <dependency>` reverses it.
 
 ## Useful PR commands
 
-Comment on the PR:
+Every Dependabot PR here is grouped, so the commands name the dependency:
 
 ```text
 @dependabot rebase
 @dependabot recreate
-@dependabot ignore this minor version
-@dependabot ignore this major version
-@dependabot ignore this dependency
-@dependabot close
+@dependabot ignore <dependency> minor version
+@dependabot ignore <dependency> major version
+@dependabot ignore <dependency>
+@dependabot show <dependency> ignore conditions
+@dependabot unignore <dependency>
 ```
 
 `recreate` is the fix when a group PR has drifted after other merges.
@@ -101,12 +109,11 @@ Comment on the PR:
   custom labels in the triage workflow, which creates them.
 - **Secrets.** Dependabot-triggered workflow runs cannot read Actions secrets.
   The triage workflow uses only `GITHUB_TOKEN`; keep it that way.
-- **Grouped PR title.** The title is generated by Dependabot and can be
-  regenerated on `recreate`; the triage workflow re-applies the badge on every
-  `synchronize` event.
-- **`group-by: dependency-name`.** The `one-pr-per-dependency` groups collapse
-  "same dependency, eight packages" into one PR. GitHub documents `group-by`
-  on its own, not after an `update-types` group, so if the Dependabot page
-  under Insights reports a config error after a merge, that group is the
-  first thing to look at. Without it the first run produced 46 PRs from 8
-  dependencies.
+- **Grouped PR title.** Dependabot regenerates it on `recreate`; the triage
+  workflow re-applies the badge on every `synchronize` event.
+- **Batch badge.** The batch is badged by its highest bump: one major among
+  ten minors makes the whole PR `[🔴 MAJOR]`. Drop that entry and the
+  recreated batch comes back as `[🟡 MINOR]`.
+- **Ecosystem.** Each directory has its own `package.json` + `package-lock.json`,
+  so the ecosystem is `npm` with the directories listed one by one (no workspace
+  root). A new package must be added to the npm and docker lists or it never updates.
