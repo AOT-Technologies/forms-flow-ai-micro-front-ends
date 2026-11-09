@@ -1,5 +1,5 @@
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:26.13.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-review/app
@@ -25,7 +25,7 @@ COPY webpack.config.js tsconfig.json babel.config.json jest.config.js /forms-flo
 RUN npm run build:webpack
 
 
-FROM nginx:1.15.2-alpine as production-stage
+FROM nginx:1.31.7-alpine as production-stage
 
 # set label for image
 LABEL Name="formsflow"
