@@ -115,21 +115,14 @@ class KeycloakService {
       // must end too, or the next online start signs the same user in again:
       // online, go to Keycloak's logout now; offline, leave a note so the
       // next online start does it before any sign-in.
+      // Leave at once: no page keeps running on a session already cleared
+      // (a connection check first could take seconds). The note makes the
+      // next online start end the Keycloak sign-in before anything else,
+      // whether or not we are online now.
       StorageService.clear();
       this.token = undefined;
-      ConnectivityService.check()
-        .catch(() => false)
-        .then((online) => {
-          if (online) {
-            window.location.assign(this.endSessionUrl());
-            return;
-          }
-          KeycloakService.markServerLogoutDue();
-          window.location.assign(`${window.location.origin}/`);
-        })
-        .catch((error) => {
-          console.error("Logout redirect failed", error);
-        });
+      KeycloakService.markServerLogoutDue();
+      window.location.assign(`${window.location.origin}/`);
       return;
     }
     this.kc?.logout();
@@ -298,6 +291,9 @@ class KeycloakService {
     clearTimeout(this.timerId);
 
     const refreshLoop = async () => {
+      // Offline or waiting for a new sign-in: reconnect() renews the login
+      // and starts this loop again; refreshing here would only fail.
+      if (this.connectionState !== "online") return;
       try {
         const refreshed = await KeycloakService.updateToken();
 
@@ -312,14 +308,16 @@ class KeycloakService {
       } catch (err) {
         console.error("Keycloak token update failed!", err);
         clearTimeout(this.timerId);
-        if (
-          OfflineSettingsService.isOfflineAllowed() &&
-          !(await ConnectivityService.check())
-        ) {
-          // Lost the connection, not the login: keep the session and try
-          // again when the internet is back instead of logging out.
-          this.setConnectionState("offline");
-          this.watchConnectivity();
+        if (OfflineSettingsService.isOfflineAllowed()) {
+          // Offline forms on: never log out from here, so saved offline
+          // work stays. A lost connection: try again when it is back. An
+          // expired login: offer a new sign-in, as reconnect() does.
+          const online = await ConnectivityService.check();
+          // reconnect() may have run meanwhile: its state wins.
+          if (this.connectionState !== "online" || this.reconnecting) return;
+          this.setConnectionState(online ? "sign-in-needed" : "offline");
+          if (online) this.stopWatchingForReconnect();
+          else this.watchConnectivity();
           return;
         }
         this.logout(); // ensure logout is defined on the instance
@@ -395,6 +393,12 @@ class KeycloakService {
       // A logout while offline could not reach Keycloak: end that sign-in
       // first, before check-sso would sign the same user in again.
       window.location.assign(this.endSessionUrl());
+      return;
+    }
+    if (this.kcInitialized && this.kc?.authenticated) {
+      // Signed in already: an earlier try failed while loading the user's
+      // details. keycloak-js allows init() once, so only load them again.
+      this.loadUserInfo(callback, onError);
       return;
     }
     this.kc
@@ -595,6 +599,8 @@ class KeycloakService {
           console.error("Reconnect failed", error);
         });
       } else if (this.connectionState === "online") {
+        // No refresh while offline: reconnect() starts it again.
+        clearTimeout(this.timerId);
         this.setConnectionState("offline");
       }
     });

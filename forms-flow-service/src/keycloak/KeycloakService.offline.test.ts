@@ -274,6 +274,68 @@ describe("KeycloakService offline start-up", () => {
     expect(connectivityListener).not.toBeNull();
   });
 
+  test("a failed token refresh while online, offline forms on: sign in again, no logout", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+    const instance = freshInstance();
+    instance.initKeycloak(jest.fn());
+    await flush();
+
+    // The login expired: the server answers, the refresh is refused.
+    mockKc.updateToken.mockRejectedValue(new Error("invalid_grant"));
+    jest.runOnlyPendingTimers();
+    await flush();
+
+    expect(mockKc.logout).not.toHaveBeenCalled();
+    expect(instance.getConnectionState()).toBe("sign-in-needed");
+  });
+
+  test("while offline the token refresh does not run; reconnect starts it again", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+    mockKc.updateToken.mockResolvedValue(true);
+    const instance = freshInstance();
+    instance.initKeycloak(jest.fn());
+    await flush();
+    mockKc.updateToken.mockClear();
+
+    connectivityListener?.(false);
+    jest.runOnlyPendingTimers(); // the refresh that was scheduled
+    await flush();
+    expect(mockKc.updateToken).not.toHaveBeenCalled();
+    expect(mockKc.logout).not.toHaveBeenCalled();
+
+    connectivityListener?.(true);
+    await flush();
+    expect(instance.getConnectionState()).toBe("online");
+    expect(mockKc.updateToken).toHaveBeenCalled();
+  });
+
+  test("the user's details failed to load: trying again loads only them again", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.authenticated = true;
+    mockKc.loadUserInfo
+      .mockRejectedValueOnce(new Error("timeout"))
+      .mockResolvedValue({ name: "Field User" });
+    const instance = freshInstance();
+    const onError = jest.fn();
+    instance.initKeycloak(jest.fn(), onError);
+    await flush();
+    expect(onError).toHaveBeenCalled();
+
+    const signedIn = jest.fn();
+    instance.initKeycloak(signedIn, onError);
+    await flush();
+
+    expect(mockKc.init).toHaveBeenCalledTimes(1); // keycloak-js allows one init
+    expect(mockKc.loadUserInfo).toHaveBeenCalledTimes(2);
+    expect(signedIn).toHaveBeenCalledWith(true);
+    mockKc.authenticated = undefined;
+  });
+
   test("connection drops while the app is open: goes offline at once, back online after", async () => {
     mockConnectivity.check.mockResolvedValue(true);
     mockKc.init.mockResolvedValue(true);
@@ -448,7 +510,7 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     "http://kc/realms/realm/protocol/openid-connect/logout?client_id=forms-flow-web" +
     "&post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A3000%2F";
 
-  test("started offline, online at logout: also ends the Keycloak sign-in", async () => {
+  test("started offline, online at logout: leaves at once; the next start ends the Keycloak sign-in", async () => {
     keepOrgSwitch(true);
     savePass();
     mockConnectivity.check.mockResolvedValue(false);
@@ -457,19 +519,22 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     service.initKeycloak(jest.fn(), jest.fn());
     await flush();
 
+    mockConnectivity.check.mockClear();
     mockConnectivity.check.mockResolvedValue(true);
     service.userLogout();
     await flush();
 
+    // No connection check first: no page keeps running on a cleared session.
+    expect(mockConnectivity.check).not.toHaveBeenCalled();
     expect((global as any).window.location.assign).toHaveBeenCalledWith(
-      END_SESSION
+      "http://localhost:3000/"
     );
     expect(
       (global as any).localStorage.getItem("ff_offline_session")
     ).toBeNull();
-    expect(
-      (global as any).localStorage.getItem("ff_offline_logout_due")
-    ).toBeNull();
+    expect((global as any).localStorage.getItem("ff_offline_logout_due")).toBe(
+      "1"
+    );
   });
 
   test("a logout still due: the next online start ends that sign-in before check-sso", async () => {

@@ -209,6 +209,25 @@ describe("ConnectivityService", () => {
     expect(changes).toEqual([false, true]);
   });
 
+  test("started offline: keeps checking, and comes back once the API answers", async () => {
+    navigatorState.onLine = false;
+    mockFetch.mockRejectedValue(new Error("Network Error"));
+    const service = loadService();
+    service.subscribe(() => {}); // the app starts watching
+    expect(service.isOnline()).toBe(false);
+
+    // The browser says online again, but the API is still down: no change
+    // of state, and the checks must go on.
+    navigatorState.onLine = true;
+    windowListeners.online.forEach((listener) => listener());
+    await jest.advanceTimersByTimeAsync(3000);
+    expect(service.isOnline()).toBe(false);
+
+    mockFetch.mockResolvedValue({ ok: true });
+    await jest.advanceTimersByTimeAsync(10000);
+    expect(service.isOnline()).toBe(true);
+  });
+
   // A server that answers after `ms`, and gives up when the probe aborts.
   const answerAfter = (ms: number) =>
     mockFetch.mockImplementation(

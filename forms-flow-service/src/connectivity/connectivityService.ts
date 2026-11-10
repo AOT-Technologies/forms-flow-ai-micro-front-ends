@@ -182,10 +182,13 @@ class ConnectivityService {
   }
 
   private static setOnline(online: boolean): void {
-    if (online === this.online) return;
-    this.online = online;
+    // Re-probe while offline even when the state did not change: an app that
+    // starts offline, or a failed check after the browser's "online" event,
+    // must still notice when the API is back.
     if (online) this.stopRecheck();
     else this.startRecheck();
+    if (online === this.online) return;
+    this.online = online;
     this.listeners.forEach((listener) => listener(online));
   }
 
@@ -212,6 +215,8 @@ class ConnectivityService {
       this.checkInBackground();
     });
     window.addEventListener("offline", () => this.setOnline(false));
+    // Started offline (the browser says so): re-probe until the API answers.
+    if (!this.online) this.startRecheck();
   }
 }
 
