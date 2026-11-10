@@ -24,6 +24,10 @@ const API = {
   TENANT_STYLE: `${WEB_BASE_URL}/style`,
   ORGANIZATION_SETTINGS: `${WEB_BASE_URL}/organization-settings`,
   AI_PERMISSIONS: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenants/<tenant_key>/ai-permissions`,
+  GOVERNED_CONTENT: `${WEB_BASE_URL}/governed-content`,
+  // Assumed tenant-admin contract (REV 4), mirroring AI_PERMISSIONS:
+  // PUT { enabled }, read back as details.governed_content on the tenant.
+  GOVERNED_CONTENT_SETTING: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenants/<tenant_key>/governed-content`,
 };
 
 export default API;

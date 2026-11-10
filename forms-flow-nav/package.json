@@ -27,7 +27,7 @@
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-important-stuff": "^3.0.0",
     "eslint-plugin-prettier": "^3.4.1",
     "identity-obj-proxy": "^3.0.0",
@@ -38,11 +38,11 @@
     "pretty-quick": "^3.1.1",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
-    "webpack": "^5.112.0",
+    "webpack": "^5.112.2",
     "webpack-cli": "^5.1.4",
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-dev-server": "^5.2.6",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^6.0.1"
   },
   "overrides": {
     "uuid": "^11.1.1"

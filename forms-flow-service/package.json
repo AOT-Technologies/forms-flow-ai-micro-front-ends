@@ -26,7 +26,7 @@
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-ts-important-stuff": "^1.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "identity-obj-proxy": "^3.0.0",
@@ -42,7 +42,7 @@
     "webpack-cli": "^5.1.4",
     "webpack-config-single-spa-ts": "^4.0.0",
     "webpack-dev-server": "^5.2.6",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^6.0.1"
   },
   "overrides": {
     "uuid": "^11.1.1",

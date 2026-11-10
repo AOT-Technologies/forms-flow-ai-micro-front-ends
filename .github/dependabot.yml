@@ -1,25 +1,37 @@
 # =============================================================================
 # Dependabot configuration — forms-flow-ai-micro-front-ends
 # -----------------------------------------------------------------------------
-# Review tiers (see .github/DEPENDABOT.md and .github/workflows/dependabot-triage.yml)
+# Policy: security first, patches grouped, everything else in ONE batch PR.
+# (see .github/DEPENDABOT.md and .github/workflows/dependabot-triage.yml)
 #
+#   security-fixes   ONE grouped PR, opened the moment a Dependabot alert has
+#                    a fix (no schedule, no cooldown) → badge [🔒 SECURITY].
+#                    Reviewed and merged before anything else. Always lands
+#                    on the default branch.
 #   patch-only-safe  ONE grouped PR across all npm packages, patch bumps only.
 #                    Title: "Bump the patch-only-safe group across N directories
-#                    with M updates" → badge [✅ PATCH-ONLY]. One review pass, merge.
-#   minor / major    ONE PR per dependency, spanning every package that uses it
-#                    (group `one-pr-per-dependency`) → badges [🟡 MINOR] /
-#                    [🔴 MAJOR]. Reviewed deliberately, merged once.
-#   security-fixes   ONE grouped PR for Dependabot security updates →
-#                    badge [🔒 SECURITY]. Always on the default branch.
+#                    with M updates" → badge [✅ PATCH-ONLY]. One review pass,
+#                    merge.
+#   minor-and-major  ONE batch PR with every remaining minor and major bump
+#                    across all npm packages → badge [🟡 MINOR] or [🔴 MAJOR],
+#                    whichever is the highest bump inside the batch. Reviewed
+#                    entry by entry; an entry that is not ready is dropped with
+#                    `@dependabot ignore <dependency> major version` (or
+#                    `minor version`) and the batch is recreated without it.
+#
+# Net effect: at most three open Dependabot PRs per ecosystem (security,
+# patch, batch) instead of one PR per dependency per directory.
 #
 # Repo facts this file encodes:
 #   - 8 independently installed MFE packages + /scripts (CD helper). NOT a
-#     workspace monorepo: each directory has its own package-lock.json.
+#     workspace monorepo: each directory has its own package.json and
+#     package-lock.json, so the ecosystem is `npm` with ONE multi-directory
+#     update job (the groups span every directory).
 #   - No `ignore` list on purpose: every available update is surfaced, so
 #     nothing is missed. Majors for policy-frozen libraries (React, webpack,
 #     single-spa, formio, the intentional jest/eslint/i18next drift; see
-#     CLAUDE.md "Hard Constraints") arrive as [🔴 MAJOR] PRs and are declined
-#     per PR with `@dependabot ignore this major version` when not planned.
+#     CLAUDE.md "Hard Constraints") land in the batch PR and are declined
+#     there per dependency when not planned.
 #   - Default branch is `develop`; no target-branch is set on purpose, because
 #     security updates only ever target the default branch and a non-default
 #     target-branch silently detaches the groups/labels from them.
@@ -31,8 +43,8 @@ version: 2
 
 updates:
   # ===========================================================================
-  # npm — all micro-frontend packages + CD scripts, in ONE update job so the
-  # patch group spans every directory ("across N directories").
+  # npm — all micro-frontend packages + CD scripts, in ONE update job so every
+  # group spans every directory ("across N directories").
   # ===========================================================================
   - package-ecosystem: "npm"
     directories:
@@ -46,13 +58,15 @@ updates:
       - "/forms-flow-theme"
       - "/scripts"
 
+    # Daily: the patch group and the batch PR are updated in place, so a
+    # daily check adds entries to open PRs instead of opening new ones.
     schedule:
-      interval: "weekly"
-      day: "thursday"
+      interval: "daily"
       time: "09:00"
       timezone: "Asia/Kolkata"
 
-    # Grouped patch PR + individual minor/major PRs can exceed the default of 5.
+    # Three grouped PRs never reach this; the limit is applied per directory
+    # and only matters for stragglers that fall outside every group.
     open-pull-requests-limit: 10
 
     # Bump the range in package.json AND the lockfile (app behaviour). Without
@@ -62,6 +76,7 @@ updates:
 
     # Supply-chain cooldown: never take a release the day it is published.
     # Most malicious npm publishes are yanked within days; waiting costs little.
+    # Security updates are exempt from cooldown.
     cooldown:
       default-days: 7
       semver-patch-days: 7
@@ -74,11 +89,20 @@ updates:
       - "dependencies"
       - "javascript"
 
-    # Branch names: dependabot/npm_and_yarn/<group-or-dep>-<hash>
+    # Branch names: dependabot/npm_and_yarn/<group>-<hash>
     pull-request-branch-name:
       separator: "/"
 
+    # Groups are matched in order; a dependency joins the first group it fits.
     groups:
+      # ---- Security first: ONE PR for Dependabot security updates ------------
+      #      (overrides the repo-level "grouped security updates" toggle and
+      #      keeps them out of the patch and batch PRs)
+      security-fixes:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
+
       # ---- ONE PR for every patch-level bump across all directories ----------
       patch-only-safe:
         applies-to: "version-updates"
@@ -87,32 +111,20 @@ updates:
         update-types:
           - "patch"
 
-      # ---- ONE PR for security fixes (overrides the repo-level
-      #      "grouped security updates" toggle; keeps them out of the patch PR)
-      security-fixes:
-        applies-to: "security-updates"
-        patterns:
-          - "*"
-
-      # ---- Everything else (minor + major): ONE PR per dependency ------------
-      # Groups match in order, so patches are already taken by patch-only-safe.
-      # Without this group Dependabot raised one PR per dependency PER
-      # DIRECTORY (8 packages × 8 dependencies = 46 PRs on the first run).
-      # `group-by: dependency-name` collapses that to one PR per dependency
-      # that touches every directory using it. Title shape:
-      # "Bump <dep> in the one-pr-per-dependency group across N directories".
-      # Note: GitHub documents group-by on its own; this combination with a
-      # preceding update-types group is validated by the first Dependabot run
-      # (errors show in Insights → Dependency graph → Dependabot).
-      one-pr-per-dependency:
+      # ---- Everything else: ONE batch PR for all minor and major bumps -------
+      # Title: "Bump the minor-and-major group across N directories with M
+      # updates". The triage workflow badges it by the highest bump inside.
+      minor-and-major:
         applies-to: "version-updates"
         patterns:
           - "*"
-        group-by: "dependency-name"
+        update-types:
+          - "minor"
+          - "major"
 
   # ===========================================================================
   # Docker — base images of the 8 package Dockerfiles (node / nginx).
-  # Patch bumps grouped; minor/major (e.g. node 16 → 20) come individually
+  # Patch bumps grouped; minor/major (e.g. node 16 → 20) in one batch PR
   # because they change the build image and need a deliberate decision.
   # ===========================================================================
   - package-ecosystem: "docker"
@@ -127,7 +139,7 @@ updates:
       - "/forms-flow-theme"
     schedule:
       interval: "weekly"
-      day: "thursday"
+      day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
@@ -140,13 +152,14 @@ updates:
           - "*"
         update-types:
           - "patch"
-      # One PR per image across all 8 Dockerfiles (e.g. one `node` PR, one
-      # `nginx` PR) instead of one per Dockerfile.
-      docker-one-pr-per-dependency:
+      # One batch PR for every image bump across all 8 Dockerfiles.
+      docker-minor-and-major:
         applies-to: "version-updates"
         patterns:
           - "*"
-        group-by: "dependency-name"
+        update-types:
+          - "minor"
+          - "major"
 
   # ===========================================================================
   # GitHub Actions — pins in .github/workflows (checkout, setup-node, aws, ...).
@@ -156,7 +169,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "thursday"
+      day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 3

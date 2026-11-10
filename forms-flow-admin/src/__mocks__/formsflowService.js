@@ -17,6 +17,10 @@ export const StorageService = {
   },
 };
 
+export const HelperServices = {
+  getLocaldate: (date) => date,
+};
+
 export const KeycloakService = {
   getInstance: () => ({
     initKeycloak: noop,
