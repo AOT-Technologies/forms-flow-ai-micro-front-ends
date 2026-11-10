@@ -200,11 +200,11 @@ describe("ConnectivityService", () => {
     const callsWhenOffline = mockFetch.mock.calls.length;
 
     await jest.advanceTimersByTimeAsync(9999);
-    expect(mockFetch.mock.calls.length).toBe(callsWhenOffline); // not yet
+    expect(mockFetch.mock.calls).toHaveLength(callsWhenOffline); // not yet
 
     mockFetch.mockResolvedValue({ ok: true });
     await jest.advanceTimersByTimeAsync(1);
-    expect(mockFetch.mock.calls.length).toBe(callsWhenOffline + 1);
+    expect(mockFetch.mock.calls).toHaveLength(callsWhenOffline + 1);
     expect(service.isOnline()).toBe(true);
     expect(changes).toEqual([false, true]);
   });

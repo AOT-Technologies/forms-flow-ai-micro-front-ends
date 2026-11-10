@@ -49,8 +49,8 @@ const NETWORK_ERROR_PROBE_GAP_MS = 5000;
 class ConnectivityService {
   private static online =
     typeof navigator === "undefined" ? true : navigator.onLine !== false;
-  private static listeners = new Set<Listener>();
-  private static sampleListeners = new Set<SampleListener>();
+  private static readonly listeners = new Set<Listener>();
+  private static readonly sampleListeners = new Set<SampleListener>();
   private static started = false;
   private static recheckTimer: ReturnType<typeof setInterval> | null = null;
   private static pendingCheck: Promise<boolean> | null = null;
@@ -66,17 +66,27 @@ class ConnectivityService {
    * start while one is running share it, so a burst of calls makes one probe.
    */
   public static check(): Promise<boolean> {
-    if (!this.pendingCheck) {
-      this.pendingCheck = this.checkTwiceIfOnline()
-        .then((online) => {
-          this.setOnline(online);
-          return online;
-        })
-        .finally(() => {
-          this.pendingCheck = null;
-        });
-    }
+    this.pendingCheck ??= this.checkTwiceIfOnline()
+      .then((online) => {
+        this.setOnline(online);
+        return online;
+      })
+      .finally(() => {
+        this.pendingCheck = null;
+      });
     return this.pendingCheck;
+  }
+
+  /**
+   * Starts a check when nobody waits for its result (timers, browser
+   * events). The probe itself never fails; only a listener that throws can
+   * make the check fail, and that is logged here instead of becoming an
+   * unhandled promise rejection.
+   */
+  private static checkInBackground(): void {
+    this.check().catch((error) => {
+      console.error("Connection check failed", error);
+    });
   }
 
   /**
@@ -118,7 +128,7 @@ class ConnectivityService {
     const now = Date.now();
     if (now - this.lastNetworkErrorProbeAt < NETWORK_ERROR_PROBE_GAP_MS) return;
     this.lastNetworkErrorProbeAt = now;
-    this.check();
+    this.checkInBackground();
   }
 
   /**
@@ -162,7 +172,9 @@ class ConnectivityService {
         signal: controller?.signal,
       });
       return response.ok;
-    } catch (error) {
+    } catch {
+      // No answer (network error, or aborted after the probe wait): the
+      // reason does not matter, the API simply cannot be reached.
       return false;
     } finally {
       clearTimeout(timeout);
@@ -172,21 +184,24 @@ class ConnectivityService {
   private static setOnline(online: boolean): void {
     if (online === this.online) return;
     this.online = online;
-    this.toggleRecheck(!online);
+    if (online) this.stopRecheck();
+    else this.startRecheck();
     this.listeners.forEach((listener) => listener(online));
   }
 
   // While offline, re-probe now and then: the browser "online" event alone
   // does not prove the API is reachable again.
-  private static toggleRecheck(enable: boolean): void {
-    if (enable && !this.recheckTimer) {
-      this.recheckTimer = setInterval(() => {
-        this.check();
-      }, OFFLINE_RECHECK_MS);
-    } else if (!enable && this.recheckTimer) {
-      clearInterval(this.recheckTimer);
-      this.recheckTimer = null;
-    }
+  private static startRecheck(): void {
+    if (this.recheckTimer) return;
+    this.recheckTimer = setInterval(() => {
+      this.checkInBackground();
+    }, OFFLINE_RECHECK_MS);
+  }
+
+  private static stopRecheck(): void {
+    if (!this.recheckTimer) return;
+    clearInterval(this.recheckTimer);
+    this.recheckTimer = null;
   }
 
   private static start(): void {
@@ -194,7 +209,7 @@ class ConnectivityService {
     if (typeof window.addEventListener !== "function") return;
     this.started = true;
     window.addEventListener("online", () => {
-      this.check();
+      this.checkInBackground();
     });
     window.addEventListener("offline", () => this.setOnline(false));
   }

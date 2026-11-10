@@ -14,7 +14,7 @@ import {
 
 // Same env key as formsflow-web (REACT_APP_OFFLINE_ENABLED).
 const offlineEnabled = () => {
-  const value = window._env_ && window._env_.REACT_APP_OFFLINE_ENABLED;
+  const value = window._env_?.REACT_APP_OFFLINE_ENABLED;
   return value === "true" || value === true;
 };
 
@@ -35,7 +35,7 @@ const TENANT_PREFIX = /^\/tenant\/[^/]+/;
 
 /** "/tenant/acme/" or "/": where the app's pages start. */
 export const baseOf = (pathname = "") => {
-  const match = pathname.match(TENANT_PREFIX);
+  const match = TENANT_PREFIX.exec(pathname);
   return match ? `${match[0]}/` : "/";
 };
 

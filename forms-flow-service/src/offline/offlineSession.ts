@@ -54,7 +54,8 @@ export const loadOfflineSession = (): OfflineSession | null => {
     // A pass saved by an older version may still hold them: never used.
     const { refreshToken, idToken, ...session } = JSON.parse(raw);
     return session as OfflineSession;
-  } catch (error) {
+  } catch {
+    // No storage access or a broken saved pass: no offline start possible.
     return null;
   }
 };

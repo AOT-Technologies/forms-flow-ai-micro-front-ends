@@ -76,7 +76,7 @@ const keepOrgSwitch = (on: boolean) =>
     JSON.stringify({ offlineEnabled: on, autoSyncEnabled: false, fetchedAt: 1 })
   );
 
-import KeycloakService from "./KeycloakService";
+import KeycloakService, { trimTrailingSlashes } from "./KeycloakService";
 import {
   loadOfflineSession,
   saveOfflineSession,
@@ -528,7 +528,7 @@ describe("KeycloakService sign-in retry", () => {
     service.initKeycloak(jest.fn(), jest.fn());
     await flush();
 
-    expect(Keycloak.mock.calls.length).toBe(created + 1);
+    expect(Keycloak.mock.calls).toHaveLength(created + 1);
   });
 
   test("a successful init keeps its Keycloak object", async () => {
@@ -540,6 +540,27 @@ describe("KeycloakService sign-in retry", () => {
     service.initKeycloak(jest.fn(), jest.fn());
     await flush();
 
-    expect(Keycloak.mock.calls.length).toBe(created);
+    expect(Keycloak.mock.calls).toHaveLength(created);
+  });
+});
+
+describe("trimTrailingSlashes (Keycloak logout address)", () => {
+  test.each([
+    ["http://kc", "http://kc"],
+    ["http://kc/", "http://kc"],
+    ["http://kc///", "http://kc"],
+    ["http://kc/auth/", "http://kc/auth"],
+    ["http://kc/a/b", "http://kc/a/b"],
+    ["/", ""],
+    ["///", ""],
+    ["", ""],
+  ])("%j -> %j", (input, expected) => {
+    expect(trimTrailingSlashes(input)).toBe(expected);
+  });
+
+  test("long runs of slashes: only the ones at the end go", () => {
+    const middle = "/".repeat(50000);
+    const input = "http://kc" + middle + "x" + "/".repeat(50000);
+    expect(trimTrailingSlashes(input)).toBe("http://kc" + middle + "x");
   });
 });

@@ -25,7 +25,7 @@ const SETTINGS_KEY = "ff_offline_settings";
 const SETTINGS_URL = () => `${WEB_BASE_URL}/organization-settings`;
 
 class OfflineSettingsService {
-  private static listeners = new Set<Listener>();
+  private static readonly listeners = new Set<Listener>();
   private static pending: Promise<OfflineSettings | null> | null = null;
 
   /** The last switches read from the server, or null if never read. */
@@ -33,7 +33,8 @@ class OfflineSettingsService {
     try {
       const raw = localStorage.getItem(SETTINGS_KEY);
       return raw ? (JSON.parse(raw) as OfflineSettings) : null;
-    } catch (error) {
+    } catch {
+      // No storage access or a broken saved copy: count as never read.
       return null;
     }
   }
@@ -54,11 +55,9 @@ class OfflineSettingsService {
    */
   public static refresh(token?: string): Promise<OfflineSettings | null> {
     if (!isOfflineEnabled()) return Promise.resolve(null);
-    if (!this.pending) {
-      this.pending = this.fetchSettings(token).finally(() => {
-        this.pending = null;
-      });
-    }
+    this.pending ??= this.fetchSettings(token).finally(() => {
+      this.pending = null;
+    });
     return this.pending;
   }
 
@@ -88,7 +87,7 @@ class OfflineSettingsService {
       };
       this.save(settings);
       return settings;
-    } catch (error) {
+    } catch {
       // Offline or the server is down: keep what we had.
       return this.get();
     }

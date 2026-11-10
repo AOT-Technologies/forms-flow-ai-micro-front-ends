@@ -14,7 +14,7 @@ jest.mock("./connectivityService", () => ({
   positiveFromEnv: jest.requireActual("./connectivityService").positiveFromEnv,
   default: {
     isOnline: () => mockOnline,
-    check: (...args: unknown[]) => mockCheck(...args),
+    check: (...args: unknown[]) => Promise.resolve(mockCheck(...args)),
     subscribeSamples: (listener: (sample: any) => void) => {
       sampleListener = listener;
       return () => {};

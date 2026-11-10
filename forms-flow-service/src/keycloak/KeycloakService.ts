@@ -20,6 +20,17 @@ interface PreviewSession {
 
 const PREVIEW_AUTH_TIMEOUT_MS = 5000;
 
+/**
+ * Removes every "/" at the end of `text` ("http://kc//" -> "http://kc").
+ * A plain loop instead of the regex /\/+$/, which can backtrack a lot on
+ * long runs of "/" (SonarCloud S8786).
+ */
+export const trimTrailingSlashes = (text: string): string => {
+  let end = text.length;
+  while (end > 0 && text[end - 1] === "/") end -= 1;
+  return text.slice(0, end);
+};
+
 const decodeToken = (token: string): KeycloakTokenParsed | null => {
   try {
     const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -115,6 +126,9 @@ class KeycloakService {
           }
           KeycloakService.markServerLogoutDue();
           window.location.assign(`${window.location.origin}/`);
+        })
+        .catch((error) => {
+          console.error("Logout redirect failed", error);
         });
       return;
     }
@@ -160,9 +174,8 @@ class KeycloakService {
       realm?: string;
       clientId?: string;
     };
-    const base = `${String(url).replace(
-      /\/+$/,
-      ""
+    const base = `${trimTrailingSlashes(
+      String(url)
     )}/realms/${encodeURIComponent(realm)}`;
     const back = `${window.location.origin}/`;
     return (
@@ -359,10 +372,17 @@ class KeycloakService {
     dropTokensFromSavedPass();
     // Offline enabled: ask our own API first (never the sign-in server), so
     // an offline start does not wait for Keycloak to time out.
-    ConnectivityService.check().then((online) =>
-      online
-        ? this.initOnline(callback, onError)
-        : this.startOffline(callback, onError)
+    // Two-argument then: only a failed check reaches onError, not an
+    // exception thrown inside the caller's own callback.
+    ConnectivityService.check().then(
+      (online) =>
+        online
+          ? this.initOnline(callback, onError)
+          : this.startOffline(callback, onError),
+      (error) => {
+        console.error("Connection check before sign-in failed", error);
+        onError?.(error);
+      }
     );
   }
 
@@ -402,24 +422,7 @@ class KeycloakService {
             this.token = this.kc.token;
             this._tokenParsed = this.kc.tokenParsed;
             StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-            // Two-argument then: only a loadUserInfo failure reaches onError,
-            // not an exception thrown inside the caller's own callback.
-            this.kc.loadUserInfo().then(
-              (data) => {
-                this.userData = data;
-                StorageService.save(
-                  StorageService.User.USER_DETAILS,
-                  JSON.stringify(data)
-                );
-                this.saveOfflineSnapshot();
-                callback(true);
-                this.loadOfflineSettings();
-              },
-              (err) => {
-                console.error("Failed to load Keycloak user info", err);
-                onError?.(err);
-              }
-            );
+            this.loadUserInfo(callback, onError);
             this.refreshToken();
             // Notice a lost connection at once, not only at the next token
             // refresh (FFF-3 offline). Also started by loadOfflineSettings()
@@ -441,6 +444,33 @@ class KeycloakService {
         if (!this.kcInitialized) this.kc = new Keycloak(this._keycloakConfig);
         onError?.(err);
       });
+  }
+
+  /**
+   * Loads the user's details after a sign-in, then calls `callback`.
+   * Two-argument then: only a loadUserInfo failure reaches onError, not an
+   * exception thrown inside the caller's own callback.
+   */
+  private loadUserInfo(
+    callback: (authenticated) => void,
+    onError?: (error: unknown) => void
+  ): void {
+    this.kc.loadUserInfo().then(
+      (data) => {
+        this.userData = data;
+        StorageService.save(
+          StorageService.User.USER_DETAILS,
+          JSON.stringify(data)
+        );
+        this.saveOfflineSnapshot();
+        callback(true);
+        this.loadOfflineSettings();
+      },
+      (err) => {
+        console.error("Failed to load Keycloak user info", err);
+        onError?.(err);
+      }
+    );
   }
 
   /**
@@ -517,15 +547,19 @@ class KeycloakService {
    */
   private loadOfflineSettings(): void {
     if (!isOfflineEnabled()) return;
-    OfflineSettingsService.refresh(this.token).then(() => {
-      if (OfflineSettingsService.isOfflineAllowed()) {
-        this.saveOfflineSnapshot();
-        this.watchConnectivity();
-      } else {
-        clearOfflineSession();
-        this.stopWatchingForReconnect();
-      }
-    });
+    OfflineSettingsService.refresh(this.token)
+      .then(() => {
+        if (OfflineSettingsService.isOfflineAllowed()) {
+          this.saveOfflineSnapshot();
+          this.watchConnectivity();
+        } else {
+          clearOfflineSession();
+          this.stopWatchingForReconnect();
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to apply the offline settings", error);
+      });
   }
 
   /**
@@ -557,7 +591,9 @@ class KeycloakService {
     if (this.stopWatchingConnectivity) return;
     this.stopWatchingConnectivity = ConnectivityService.subscribe((online) => {
       if (online) {
-        this.reconnect();
+        this.reconnect().catch((error) => {
+          console.error("Reconnect failed", error);
+        });
       } else if (this.connectionState === "online") {
         this.setConnectionState("offline");
       }
@@ -593,8 +629,9 @@ class KeycloakService {
       this.setConnectionState("online");
       this.refreshToken();
       this.loadOfflineSettings();
-    } catch (error) {
-      // Connection dropped again: try again when it is back.
+    } catch {
+      // The renewal failed. Why does not matter here: if the connection
+      // dropped again, try again when it is back; else sign in again.
       if (!(await ConnectivityService.check())) return;
       this.stopWatchingForReconnect();
       this.setConnectionState("sign-in-needed");
@@ -666,14 +703,18 @@ class KeycloakService {
    * Registered logout guards run first and may cancel it.
    */
   public userLogout(beforeLogout?: () => void): void {
-    KeycloakService.logoutAllowed().then((allowed) => {
-      if (!allowed) return;
-      // Runs only when the logout goes ahead (e.g. the menu moves to the home
-      // page, so a cancelled logout leaves the user where they were).
-      beforeLogout?.();
-      StorageService.clear();
-      this.logout();
-    });
+    KeycloakService.logoutAllowed()
+      .then((allowed) => {
+        if (!allowed) return;
+        // Runs only when the logout goes ahead (e.g. the menu moves to the
+        // home page, so a cancelled logout leaves the user where they were).
+        beforeLogout?.();
+        StorageService.clear();
+        this.logout();
+      })
+      .catch((error) => {
+        console.error("Logout failed", error);
+      });
   }
   /**
    *

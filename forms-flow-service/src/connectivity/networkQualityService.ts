@@ -149,7 +149,7 @@ class NetworkQualityService {
   // The level our checks give (with the "no flicker" rule).
   private static checkLevel: OnlineLevel = "good";
   private static betterInARow = 0;
-  private static listeners = new Set<Listener>();
+  private static readonly listeners = new Set<Listener>();
   private static started = false;
   private static lastSent: NetworkLevel | null = null;
   // The last check that worked while we were still offline (see start()).
@@ -234,7 +234,11 @@ class NetworkQualityService {
     }
     if (!ConnectivityService.isOnline()) return false;
     this.lastCheckAt = Date.now();
-    ConnectivityService.check();
+    // Nobody waits for the result: the level comes from the sample the
+    // check sends to addSample(). A failure is only logged.
+    ConnectivityService.check().catch((error) => {
+      console.error("Network level check failed", error);
+    });
     return true;
   }
 
