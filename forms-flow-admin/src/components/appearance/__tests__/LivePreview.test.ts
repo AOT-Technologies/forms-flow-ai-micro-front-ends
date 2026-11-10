@@ -1,4 +1,86 @@
-import { scrollFor } from "../LivePreview";
+import React from "react";
+import { act, render } from "@testing-library/react";
+import LivePreview, { scrollFor } from "../LivePreview";
+import { placePreviewFrame } from "../previewFrameHost";
+
+jest.mock("react-i18next", () => {
+  const t = (key: string) => key;
+  return { useTranslation: () => ({ t }) };
+});
+
+jest.mock("../previewFrameHost", () => ({
+  PANEL_WIDTH: 688,
+  PANEL_HEIGHT: 808,
+  acquirePreviewFrame: jest.fn(() => () => undefined),
+  hidePreviewFrame: jest.fn(),
+  placePreviewFrame: jest.fn(),
+  sendPreviewDraft: jest.fn(),
+  setPreviewWheelHandler: jest.fn(),
+}));
+
+describe("LivePreview keeps the frame over the panel", () => {
+  let frames: FrameRequestCallback[] = [];
+  let panelLeft = 100;
+  const placed = placePreviewFrame as jest.Mock;
+
+  const nextFrame = () =>
+    act(() => {
+      const pending = frames;
+      frames = [];
+      pending.forEach((callback) => callback(0));
+    });
+
+  const renderPreview = () =>
+    render(
+      React.createElement(LivePreview, {
+        src: "/home",
+        branding: { displayName: null, buttonShape: "rounded", logoUrl: null },
+      })
+    );
+
+  beforeEach(() => {
+    frames = [];
+    panelLeft = 100;
+    placed.mockClear();
+    jest
+      .spyOn(window, "requestAnimationFrame")
+      .mockImplementation((callback) => frames.push(callback));
+    jest.spyOn(window, "cancelAnimationFrame").mockImplementation(jest.fn());
+    jest
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(
+        () =>
+          ({
+            left: panelLeft,
+            top: 50,
+            right: panelLeft + 688,
+            bottom: 858,
+          } as DOMRect)
+      );
+  });
+
+  afterEach(() => jest.restoreAllMocks());
+
+  it("moves the frame when the page shifts without scrolling or resizing", () => {
+    renderPreview();
+    expect(placed).toHaveBeenCalledTimes(1);
+
+    nextFrame();
+    expect(placed).toHaveBeenCalledTimes(1);
+
+    // The nav rail expands and pushes the panel right.
+    panelLeft = 228;
+    nextFrame();
+    expect(placed).toHaveBeenCalledTimes(2);
+    expect(placed.mock.calls[1][0].left).toBe(228);
+  });
+
+  it("stops checking once the tab is closed", () => {
+    const { unmount } = renderPreview();
+    unmount();
+    expect(window.cancelAnimationFrame).toHaveBeenCalled();
+  });
+});
 
 // A scroll container with the given overflow and scroll position.
 const container = (

@@ -114,22 +114,34 @@ const LivePreview: React.FC<LivePreviewProps> = ({ src, branding }) => {
     const panel = panelRef.current;
     if (!panel) return undefined;
     const ancestors = getClippingAncestors(panel);
+    let placedAt = "";
+    const update = () => {
+      const rect = panel.getBoundingClientRect();
+      const area = visibleArea(ancestors);
+      const at = [rect.left, rect.top, rect.right, rect.bottom]
+        .concat([area.left, area.top, area.right, area.bottom])
+        .join();
+      if (at === placedAt) return;
+      placedAt = at;
+      placePreviewFrame(rect, area);
+    };
+    update();
+    // The panel can move without resizing or scrolling (the nav rail animates
+    // open and pushes the page over), so its position is checked every frame.
+    let frame = 0;
+    const tick = () => {
+      update();
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    setPreviewWheelHandler((wheel) => scrollFor(ancestors, wheel));
     // Synchronous, not deferred to the next frame, so the frame never trails
     // the panel while scrolling.
-    const update = () =>
-      placePreviewFrame(panel.getBoundingClientRect(), visibleArea(ancestors));
-    update();
-    setPreviewWheelHandler((wheel) => scrollFor(ancestors, wheel));
-    const observer = new ResizeObserver(update);
-    observer.observe(panel);
-    observer.observe(document.body);
     window.addEventListener("scroll", update, true);
-    window.addEventListener("resize", update);
     return () => {
-      observer.disconnect();
+      cancelAnimationFrame(frame);
       setPreviewWheelHandler(null);
       window.removeEventListener("scroll", update, true);
-      window.removeEventListener("resize", update);
       hidePreviewFrame();
     };
   }, [src]);
