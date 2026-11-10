@@ -1,3 +1,6 @@
+# Build context is the REPO ROOT (webpack.formio.js and the theme mixins live
+# outside this package):
+#   docker build -f forms-flow-nav/Dockerfile .
 # base image
 FROM node:24.21.0-alpine as build-stage
 
@@ -13,12 +16,17 @@ RUN apk update && apk upgrade && \
 
 # install and cache app dependencies
 
-COPY package-lock.json /forms-flow-nav/app/package-lock.json
-COPY package.json /forms-flow-nav/app/package.json
+COPY forms-flow-nav/package-lock.json /forms-flow-nav/app/package-lock.json
+COPY forms-flow-nav/package.json /forms-flow-nav/app/package.json
 
 RUN npm ci
 
-COPY . /forms-flow-nav/app/
+# Shared files, placed one level above the app so the repo-relative
+# "../webpack.formio" and "../../../forms-flow-theme/..." paths resolve as in a checkout
+COPY webpack.formio.js /forms-flow-nav/
+COPY forms-flow-theme/scss/v8-scss/_mixins.scss /forms-flow-nav/forms-flow-theme/scss/v8-scss/
+
+COPY forms-flow-nav/ /forms-flow-nav/app/
 
 RUN npm run build:webpack
 
@@ -30,7 +38,7 @@ LABEL Name="formsflow"
 
 RUN mkdir /app
 COPY --from=build-stage /forms-flow-nav/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY forms-flow-nav/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080
 WORKDIR /usr/share/nginx/html/config
 # COPY .env .

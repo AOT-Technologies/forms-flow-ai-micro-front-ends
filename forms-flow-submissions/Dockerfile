@@ -1,3 +1,6 @@
+# Build context is the REPO ROOT (webpack.formio.js and the theme mixins live
+# outside this package):
+#   docker build -f forms-flow-submissions/Dockerfile .
 # base image
 FROM node:24.21.0-alpine as build-stage
 
@@ -13,14 +16,19 @@ RUN apk update && apk upgrade && \
 
 # install and cache app dependencies
 
-COPY package-lock.json /forms-flow-submissions/app/package-lock.json
-COPY package.json /forms-flow-submissions/app/package.json
+COPY forms-flow-submissions/package-lock.json /forms-flow-submissions/app/package-lock.json
+COPY forms-flow-submissions/package.json /forms-flow-submissions/app/package.json
 
 RUN npm ci --force
 
+# Shared files, placed one level above the app so the repo-relative
+# "../webpack.formio" and "../../forms-flow-theme/..." paths resolve as in a checkout
+COPY webpack.formio.js /forms-flow-submissions/
+COPY forms-flow-theme/scss/v8-scss/_mixins.scss /forms-flow-submissions/forms-flow-theme/scss/v8-scss/
+
 # Copy only necessary files
-COPY src/ /forms-flow-submissions/app/src/
-COPY webpack.config.js webpack.formio.js tsconfig.json babel.config.json jest.config.js /forms-flow-submissions/app/
+COPY forms-flow-submissions/src/ /forms-flow-submissions/app/src/
+COPY forms-flow-submissions/webpack.config.js forms-flow-submissions/tsconfig.json forms-flow-submissions/babel.config.json forms-flow-submissions/jest.config.js /forms-flow-submissions/app/
  
 RUN npm run build:webpack
 
@@ -32,7 +40,7 @@ LABEL Name="formsflow"
 
 RUN mkdir /app
 COPY --from=build-stage /forms-flow-submissions/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY forms-flow-submissions/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
 WORKDIR /usr/share/nginx/html/config

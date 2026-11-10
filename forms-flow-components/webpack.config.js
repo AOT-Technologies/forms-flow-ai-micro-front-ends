@@ -1,7 +1,7 @@
 const { merge } = require("webpack-merge");
 const singleSpaDefaults = require("webpack-config-single-spa-ts");
 const webpack = require("webpack");
-const { getFormioAliases, getFormioPlugins } = require("./webpack.formio");
+const { getFormioAliases, getFormioPlugins } = require("../webpack.formio");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({

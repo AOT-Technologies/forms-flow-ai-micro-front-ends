@@ -220,6 +220,14 @@ every change needs a measurable engineering benefit.
   `@aot-technologies/formiojs`/`formio-react` · Sass. Root `webpack.formio.js` (formio
   aliases + sass rule) is shared by nav/components/review/submissions — extend it there,
   don't duplicate aliases.
+- **Shared files are single-source, never copied:** components/nav/review/submissions
+  `require("../webpack.formio")`; admin/nav/review/submissions `@import` theme
+  `scss/v8-scss/_mixins.scss` by relative path (`../../forms-flow-theme/...`). So those
+  five packages' Docker images build with the **repo root as context**:
+  `docker build -f forms-flow-<name>/Dockerfile .` (their `docker-compose.yaml` uses
+  `context: ..`). Each Dockerfile copies the shared files one level above its `app/`
+  dir so the relative paths resolve exactly as in a checkout; root `.dockerignore` keeps
+  the context small. Adding a new shared import → add a matching `COPY` there.
 - Commands (inside each package): `npm start` (dev server on the package's port) ·
   `npm run start:standalone` · `npm run build` (webpack + `build:types` where TS) ·
   `npm run lint` · `npm run format` / `check-format` (prettier IS installed — unlike

@@ -5,7 +5,7 @@ const {
   getFormioAliases,
   getFormioPlugins,
   sassRule,
-} = require("./webpack.formio");
+} = require("../webpack.formio");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
