@@ -1,5 +1,5 @@
 # base image
-FROM node:24.21.0-alpine as build-stage
+FROM node:26.13.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-integration/app
@@ -23,7 +23,7 @@ COPY . /forms-flow-integration/app/
 RUN npm run build:webpack
 
 
-FROM nginx:1.15.2-alpine as production-stage
+FROM nginx:1.31.8-alpine as production-stage
 
 # set label for image
 LABEL Name="formsflow"
