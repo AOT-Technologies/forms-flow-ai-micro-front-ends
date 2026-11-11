@@ -17,6 +17,7 @@ jest.mock("keycloak-js", () => jest.fn().mockImplementation(() => mockKc));
 let connectivityListener: ((online: boolean) => void) | null = null;
 const mockConnectivity = {
   check: jest.fn(),
+  isOnline: jest.fn(() => true),
   subscribe: jest.fn((listener: (online: boolean) => void) => {
     connectivityListener = listener;
     return () => {
@@ -29,6 +30,7 @@ jest.mock("../connectivity/connectivityService", () => ({
   __esModule: true,
   default: {
     check: (...args: any[]) => mockConnectivity.check(...args),
+    isOnline: () => mockConnectivity.isOnline(),
     subscribe: (...args: any[]) => mockConnectivity.subscribe(...args),
   },
 }));
@@ -334,6 +336,52 @@ describe("KeycloakService offline start-up", () => {
     expect(mockKc.loadUserInfo).toHaveBeenCalledTimes(2);
     expect(signedIn).toHaveBeenCalledWith(true);
     mockKc.authenticated = undefined;
+  });
+
+  test("started online, connection lost, then logout: leaves at once and ends the Keycloak sign-in later", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+    (global as any).window.location.assign = jest.fn();
+    const instance = freshInstance();
+    instance.initKeycloak(jest.fn());
+    await flush();
+
+    connectivityListener?.(false);
+    instance.userLogout();
+    await flush();
+
+    // Keycloak's logout page cannot load offline.
+    expect(mockKc.logout).not.toHaveBeenCalled();
+    expect((global as any).window.location.assign).toHaveBeenCalledWith(
+      "http://localhost:3000/"
+    );
+    expect((global as any).localStorage.getItem("ff_offline_logout_due")).toBe(
+      "1"
+    );
+  });
+
+  test("the connection drops again while the login is renewed: stays offline", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+    const instance = freshInstance();
+    instance.initKeycloak(jest.fn());
+    await flush();
+    connectivityListener?.(false);
+
+    // Online for a moment: the renewal works, but the connection is gone
+    // again when it finishes.
+    mockKc.updateToken.mockResolvedValue(true);
+    mockConnectivity.isOnline.mockReturnValueOnce(false);
+    connectivityListener?.(true);
+    await flush();
+    expect(instance.getConnectionState()).toBe("offline");
+
+    // Back for real: online.
+    connectivityListener?.(true);
+    await flush();
+    expect(instance.getConnectionState()).toBe("online");
   });
 
   test("connection drops while the app is open: goes offline at once, back online after", async () => {

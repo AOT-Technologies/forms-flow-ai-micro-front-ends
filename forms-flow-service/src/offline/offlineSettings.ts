@@ -1,6 +1,6 @@
 import { WEB_BASE_URL } from "../constants/constants";
 import StorageService from "../storage/storageService";
-import { isOfflineEnabled } from "./offlineSession";
+import { isAutoSyncEnvEnabled, isOfflineEnabled } from "./offlineSession";
 
 /**
  * The organization's offline switches (FFF-3, Phase 4 part 2).
@@ -44,9 +44,17 @@ class OfflineSettingsService {
     return isOfflineEnabled() && this.get()?.offlineEnabled === true;
   }
 
-  /** Auto sync is on (only when offline forms are on too). */
+  /**
+   * Auto sync is on: offline forms on, the installation's env key
+   * (REACT_APP_OFFLINE_AUTO_SYNC_ENABLED) and the organization's switch. The
+   * env key wins over a switch kept from before it was turned off.
+   */
   public static isAutoSyncAllowed(): boolean {
-    return this.isOfflineAllowed() && this.get()?.autoSyncEnabled === true;
+    return (
+      this.isOfflineAllowed() &&
+      isAutoSyncEnvEnabled() &&
+      this.get()?.autoSyncEnabled === true
+    );
   }
 
   /**
@@ -72,7 +80,9 @@ class OfflineSettingsService {
   private static async fetchSettings(
     token?: string
   ): Promise<OfflineSettings | null> {
-    const bearer = token || StorageService.get(StorageService.User.AUTH_TOKEN);
+    const signedIn = () => StorageService.get(StorageService.User.AUTH_TOKEN);
+    const hadSession = !!signedIn();
+    const bearer = token || signedIn();
     try {
       const response = await fetch(SETTINGS_URL(), {
         headers: bearer ? { Authorization: `Bearer ${bearer}` } : {},
@@ -80,6 +90,9 @@ class OfflineSettingsService {
       });
       if (!response.ok) return this.get();
       const body = await response.json();
+      // Logout or a tenant switch while the request ran cleared the session:
+      // the answer belongs to the previous organization, so it is not kept.
+      if (hadSession && !signedIn()) return null;
       const settings: OfflineSettings = {
         offlineEnabled: body?.offline?.enabled === true,
         autoSyncEnabled: body?.offline?.autoSync === true,

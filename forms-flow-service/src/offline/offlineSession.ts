@@ -32,6 +32,12 @@ export const isOfflineEnabled = (): boolean => {
   return value === "true" || value === true;
 };
 
+/** The installation allows auto sync (REACT_APP_OFFLINE_AUTO_SYNC_ENABLED). */
+export const isAutoSyncEnvEnabled = (): boolean => {
+  const value = env().REACT_APP_OFFLINE_AUTO_SYNC_ENABLED;
+  return isOfflineEnabled() && (value === "true" || value === true);
+};
+
 export const getOfflineMaxHours = (): number => {
   const hours = Number(env().REACT_APP_OFFLINE_MAX_HOURS);
   return hours > 0 ? hours : DEFAULT_MAX_HOURS;
@@ -96,4 +102,8 @@ export const isUsableOfflineSession = (
   !!session &&
   !!session.token &&
   session.clientId === clientId &&
+  Number.isFinite(session.lastOnlineAuthAt) &&
+  // A sign-in time in the future (the clock was set back) would stretch the
+  // offline time limit: refused, the user signs in online again.
+  session.lastOnlineAuthAt <= now &&
   now - session.lastOnlineAuthAt <= maxHours * HOUR_MS;

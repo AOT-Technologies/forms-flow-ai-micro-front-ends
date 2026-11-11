@@ -96,6 +96,14 @@ describe("offlineSession", () => {
     expect(isUsableOfflineSession(old, "forms-flow-web", NOW, 24)).toBe(false);
   });
 
+  test("a pass with a sign-in time in the future cannot start the app", () => {
+    // The device clock was set back after the sign-in.
+    const future = session({ lastOnlineAuthAt: NOW + 60 * 1000 });
+    expect(isUsableOfflineSession(future, "forms-flow-web", NOW, 24)).toBe(false);
+    const broken = session({ lastOnlineAuthAt: Number.NaN });
+    expect(isUsableOfflineSession(broken, "forms-flow-web", NOW, 24)).toBe(false);
+  });
+
   test("a pass from another tenant's client cannot start the app", () => {
     expect(
       isUsableOfflineSession(session(), "tenantB-forms-flow-web", NOW, 24)

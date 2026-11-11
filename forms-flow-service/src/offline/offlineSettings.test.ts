@@ -31,6 +31,7 @@ describe("OfflineSettingsService", () => {
   beforeEach(() => {
     (global as any).localStorage.clear();
     (global as any).window._env_.REACT_APP_OFFLINE_ENABLED = "true";
+    (global as any).window._env_.REACT_APP_OFFLINE_AUTO_SYNC_ENABLED = "true";
     (global as any).fetch = jest.fn();
   });
 
@@ -70,6 +71,34 @@ describe("OfflineSettingsService", () => {
 
     expect(OfflineSettingsService.isOfflineAllowed()).toBe(false);
     expect(await OfflineSettingsService.refresh("t")).toBeNull();
+  });
+
+  test("the auto sync env key off wins over a kept auto sync switch", async () => {
+    (global as any).fetch.mockReturnValue(answer({ enabled: true, autoSync: true }));
+    await OfflineSettingsService.refresh("t");
+    (global as any).window._env_.REACT_APP_OFFLINE_AUTO_SYNC_ENABLED = "false";
+
+    expect(OfflineSettingsService.isOfflineAllowed()).toBe(true);
+    expect(OfflineSettingsService.isAutoSyncAllowed()).toBe(false);
+  });
+
+  test("an answer that arrives after logout is not kept", async () => {
+    (global as any).sessionStorage.setItem("AUTH_TOKEN", "user-token");
+    let reply: (value: unknown) => void = () => {};
+    (global as any).fetch.mockReturnValue(
+      new Promise((resolve) => {
+        reply = resolve;
+      })
+    );
+    const reading = OfflineSettingsService.refresh();
+
+    // Logout or a tenant switch clears both stores.
+    (global as any).sessionStorage.clear();
+    (global as any).localStorage.clear();
+    reply(await answer({ enabled: true, autoSync: true }));
+
+    expect(await reading).toBeNull();
+    expect(OfflineSettingsService.get()).toBeNull();
   });
 
   test("tells listeners when a switch changes, not when it stays the same", async () => {

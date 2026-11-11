@@ -109,16 +109,14 @@ class KeycloakService {
   }
 
   private logout(): void {
-    if (!this.kcInitialized) {
-      // Started offline (FFF-3): keycloak-js can only log out after init(),
-      // so clear the session here. The Keycloak sign-in (its session cookie)
-      // must end too, or the next online start signs the same user in again:
-      // online, go to Keycloak's logout now; offline, leave a note so the
-      // next online start does it before any sign-in.
-      // Leave at once: no page keeps running on a session already cleared
-      // (a connection check first could take seconds). The note makes the
-      // next online start end the Keycloak sign-in before anything else,
-      // whether or not we are online now.
+    // Started offline, or started online and the connection is gone now:
+    // keycloak-js would open Keycloak's logout page, which cannot load.
+    if (!this.kcInitialized || this.connectionState !== "online") {
+      // Offline logout (FFF-3): clear the session and leave at once, so no
+      // page keeps running on a session already cleared. The Keycloak
+      // sign-in (its session cookie) must end too, or the next online start
+      // signs the same user in again: the note makes that start end it
+      // before anything else.
       StorageService.clear();
       this.token = undefined;
       KeycloakService.markServerLogoutDue();
@@ -632,6 +630,9 @@ class KeycloakService {
       this._tokenParsed = this.kc.tokenParsed;
       StorageService.save(StorageService.User.AUTH_TOKEN, this.token);
       this.saveOfflineSnapshot();
+      // The connection dropped again during the renewal: stay offline (the
+      // new token is kept); the next "online" runs this again.
+      if (!ConnectivityService.isOnline()) return;
       this.setConnectionState("online");
       this.refreshToken();
       this.loadOfflineSettings();
