@@ -1,5 +1,8 @@
+# Build context is the REPO ROOT (webpack.formio.js and the theme mixins live
+# outside this package):
+#   docker build -f forms-flow-review/Dockerfile .
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:24.21.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-review/app
@@ -13,14 +16,19 @@ RUN apk update && apk upgrade && \
 
 # install and cache app dependencies
 
-COPY package-lock.json /forms-flow-review/app/package-lock.json
-COPY package.json /forms-flow-review/app/package.json
+COPY forms-flow-review/package-lock.json /forms-flow-review/app/package-lock.json
+COPY forms-flow-review/package.json /forms-flow-review/app/package.json
 
-RUN npm install
+RUN npm ci --force
+
+# Shared files, placed one level above the app so the repo-relative
+# "../webpack.formio" and "../../forms-flow-theme/..." paths resolve as in a checkout
+COPY webpack.formio.js /forms-flow-review/
+COPY forms-flow-theme/scss/v8-scss/_mixins.scss /forms-flow-review/forms-flow-theme/scss/v8-scss/
 
 # Copy only necessary files
-COPY src/ /forms-flow-review/app/src/
-COPY webpack.config.js tsconfig.json babel.config.json jest.config.js /forms-flow-review/app/
+COPY forms-flow-review/src/ /forms-flow-review/app/src/
+COPY forms-flow-review/webpack.config.js forms-flow-review/tsconfig.json forms-flow-review/babel.config.json forms-flow-review/jest.config.js /forms-flow-review/app/
  
 RUN npm run build:webpack
 
@@ -32,7 +40,7 @@ LABEL Name="formsflow"
 
 RUN mkdir /app
 COPY --from=build-stage /forms-flow-review/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY forms-flow-review/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
 WORKDIR /usr/share/nginx/html/config
