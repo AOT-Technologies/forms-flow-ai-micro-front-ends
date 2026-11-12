@@ -14,11 +14,16 @@ defaults:
     shell: bash
 jobs:
   build:
+
+    permissions:
+      contents: read
+      id-token: write
+
     name: Build and push artifacts to s3
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: '24.21.0'
       - name: Set version
@@ -45,11 +50,11 @@ jobs:
         #continue-on-error: false    this line commented for force push because some test cases are failing
       - run: npm run build:webpack
         working-directory: ./forms-flow-components
-      - uses: aws-actions/configure-aws-credentials@v6
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.REGION }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_S3_ROLE_ARN }}
+          aws-region: ${{ secrets.S3_REGION }}
       - run: npm ci
         working-directory: ./scripts
       - run: node index forms-flow-components
