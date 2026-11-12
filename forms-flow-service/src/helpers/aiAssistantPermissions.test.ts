@@ -13,28 +13,26 @@ const BOTH_ON = {
   REACT_APP_MULTI_TENANCY_ENABLED: "true",
 };
 
+const AI_ONLY = { REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: "true" };
+
 afterEach(() => setEnv(undefined));
 
 describe("isAiAssistantFeatureEnabled", () => {
-  it("is true only when both env flags are on", () => {
-    setEnv(BOTH_ON);
+  it.each([[BOTH_ON], [AI_ONLY]])("is true when the AI flag is on (%o)", (env) => {
+    setEnv(env);
     expect(isAiAssistantFeatureEnabled()).toBe(true);
   });
 
   it("accepts boolean env values", () => {
-    setEnv({
-      REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: true,
-      REACT_APP_MULTI_TENANCY_ENABLED: true,
-    });
+    setEnv({ REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: true });
     expect(isAiAssistantFeatureEnabled()).toBe(true);
   });
 
   it.each([
     [{ ...BOTH_ON, REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: "false" }],
-    [{ ...BOTH_ON, REACT_APP_MULTI_TENANCY_ENABLED: "false" }],
-    [{ REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: "true" }],
+    [{ REACT_APP_MULTI_TENANCY_ENABLED: "true" }],
     [{}],
-  ])("is false when either flag is off or missing (%o)", (env) => {
+  ])("is false when the AI flag is off or missing (%o)", (env) => {
     setEnv(env);
     expect(isAiAssistantFeatureEnabled()).toBe(false);
   });
@@ -42,41 +40,51 @@ describe("isAiAssistantFeatureEnabled", () => {
   // The browser has no `process`, so the flags must come from window._env_ alone.
   it("ignores process.env", () => {
     process.env.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED = "true";
-    process.env.REACT_APP_MULTI_TENANCY_ENABLED = "true";
     try {
       setEnv(undefined);
       expect(isAiAssistantFeatureEnabled()).toBe(false);
     } finally {
       delete process.env.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED;
-      delete process.env.REACT_APP_MULTI_TENANCY_ENABLED;
     }
   });
 });
 
 describe("isSubmissionAssistantEnabledForTenant", () => {
-  it("reads the flag from details", () => {
-    expect(
-      isSubmissionAssistantEnabledForTenant({ details: { submission_assistant: true } })
-    ).toBe(true);
+  describe("multi-tenant", () => {
+    beforeEach(() => setEnv(BOTH_ON));
+
+    it("reads the flag from details", () => {
+      expect(
+        isSubmissionAssistantEnabledForTenant({ details: { submission_assistant: true } })
+      ).toBe(true);
+    });
+
+    it("falls back to the top-level flag", () => {
+      expect(isSubmissionAssistantEnabledForTenant({ submission_assistant: true })).toBe(true);
+    });
+
+    it("prefers details over the top-level flag", () => {
+      expect(
+        isSubmissionAssistantEnabledForTenant({
+          submission_assistant: true,
+          details: { submission_assistant: false },
+        })
+      ).toBe(false);
+    });
+
+    it.each([[null], [undefined], [{}], [{ details: null }], [{ submission_assistant: false }]])(
+      "is false for %o",
+      (tenantData) => {
+        expect(isSubmissionAssistantEnabledForTenant(tenantData as any)).toBe(false);
+      }
+    );
   });
 
-  it("falls back to the top-level flag", () => {
-    expect(isSubmissionAssistantEnabledForTenant({ submission_assistant: true })).toBe(true);
-  });
-
-  it("prefers details over the top-level flag", () => {
-    expect(
-      isSubmissionAssistantEnabledForTenant({
-        submission_assistant: true,
-        details: { submission_assistant: false },
-      })
-    ).toBe(false);
-  });
-
-  it.each([[null], [undefined], [{}], [{ details: null }], [{ submission_assistant: false }]])(
-    "is false for %o",
+  it.each([[null], [{ details: { submission_assistant: false } }]])(
+    "is true in single-tenant whatever the record says (%o)",
     (tenantData) => {
-      expect(isSubmissionAssistantEnabledForTenant(tenantData as any)).toBe(false);
+      setEnv(AI_ONLY);
+      expect(isSubmissionAssistantEnabledForTenant(tenantData as any)).toBe(true);
     }
   );
 });
@@ -94,8 +102,15 @@ describe("canShowSubmissionAssistant", () => {
     expect(canShowSubmissionAssistant({ details: { submission_assistant: false } })).toBe(false);
   });
 
-  it("is false when an env flag is off", () => {
-    setEnv({ ...BOTH_ON, REACT_APP_MULTI_TENANCY_ENABLED: "false" });
+  it("is false when the AI flag is off", () => {
+    setEnv({ ...BOTH_ON, REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED: "false" });
     expect(canShowSubmissionAssistant(tenantOn)).toBe(false);
+  });
+
+  it("follows the AI flag alone in single-tenant", () => {
+    setEnv(AI_ONLY);
+    expect(canShowSubmissionAssistant(null)).toBe(true);
+    setEnv({});
+    expect(canShowSubmissionAssistant(null)).toBe(false);
   });
 });
