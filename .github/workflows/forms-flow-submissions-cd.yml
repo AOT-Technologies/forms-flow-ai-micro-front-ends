@@ -15,6 +15,11 @@ defaults:
     working-directory: ./forms-flow-submissions
 jobs:
   build:
+
+    permissions:
+      contents: read
+      id-token: write
+
     name: Build and push artifacts to s3
     runs-on: ubuntu-24.04
     steps:
