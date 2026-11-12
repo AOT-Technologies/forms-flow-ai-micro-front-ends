@@ -19,6 +19,7 @@ import {
   isAiAssistantFeatureEnabled,
 } from "@formsflow/service";
 import { UsageSummaryCard } from "./UsageSummaryCard";
+import OfflineSettingsSection from "./OfflineSettingsSection";
 import {
   AiPermissionsSection,
   AiPermissions,
@@ -33,6 +34,7 @@ import { updateAiPermissions } from "../../services/organization";
 import {
   MANAGE_GOVERNED_CONTENT,
   MULTITENANCY_ENABLED,
+  OFFLINE_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
 } from "../../constants";
@@ -92,6 +94,7 @@ const Organization: React.FC<any> = (props) => {
   const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [termsOpen, setTermsOpen] = useState(true);
+  const [offlineOpen, setOfflineOpen] = useState(true);
   const [aiPermissions, setAiPermissions] = useState<AiPermissions>(
     DEFAULT_AI_PERMISSIONS
   );
@@ -301,6 +304,17 @@ const Organization: React.FC<any> = (props) => {
               onSaved={refreshTenant}
             />
           </section>
+        )}
+
+        {isOrganizationManager && OFFLINE_ENABLED && (
+          <AccordionSection
+            title={t("Offline Submission")}
+            isOpen={offlineOpen}
+            onToggle={() => setOfflineOpen(!offlineOpen)}
+            dataTestId="organization-offline-toggle"
+          >
+            <OfflineSettingsSection />
+          </AccordionSection>
         )}
 
         <AccordionSection

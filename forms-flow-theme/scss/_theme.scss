@@ -131,6 +131,16 @@ $animSpeed: 300ms;
   --custom-logo-path: " ";
   --custom-title: " ";
 
+  // Status colours of the offline forms pills (FFF-3; Figma ff/color/...):
+  // waiting (yellow), syncing / on this device (indigo), failed (red).
+  --ff-gray-800: #4a4a4a;
+  --ff-yellow-100: #fdf7ea;
+  --ff-yellow-900: #ecb22e;
+  --ff-indigo-100: #e8ebff;
+  --ff-indigo-500: #8d9afd;
+  --ff-red-100: #f9eaea;
+  --ff-red-700: #d45e5e;
+
   //for buttons
   --primary-btn-font-color: #{$white};
   --primary-btn-bg-color: #{$primary};
