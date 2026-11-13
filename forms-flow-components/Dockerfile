@@ -1,7 +1,7 @@
 # Build context is the REPO ROOT (webpack.formio.js lives outside this package):
 #   docker build -f forms-flow-components/Dockerfile .
 # base image
-FROM node:24.21.0-alpine as build-stage
+FROM node:26.13.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-components/app
@@ -29,7 +29,7 @@ COPY forms-flow-components/ /forms-flow-components/app/
 RUN npm run build:webpack
 
 
-FROM nginx:1.15.2-alpine as production-stage
+FROM nginx:1.31.8-alpine as production-stage
 
 # set label for image
 LABEL Name="formsflow"
