@@ -31,6 +31,11 @@ export const AI_ASSISTANT_ENABLED = isEnabled(
   window._env_?.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED || false
 );
 
+// Deployment switch for Form Governance (governed content); off when unset.
+export const FORM_GOVERNANCE_ENABLED = isEnabled(
+  window._env_?.REACT_APP_ENABLE_FORM_GOVERNANCE || false
+);
+
 export const AI_ASSISTANT_PRIVACY_NOTICE_LENGTH = Number.parseInt(
   window._env_?.REACT_APP_AI_PRIVACY_NOTICE_LEN || "300",
   10

@@ -31,6 +31,7 @@ import { isGovernedContentOn } from "../governedContent/governedSetting";
 import API from "../../endpoints";
 import { updateAiPermissions } from "../../services/organization";
 import {
+  FORM_GOVERNANCE_ENABLED,
   MANAGE_GOVERNED_CONTENT,
   MULTITENANCY_ENABLED,
   URL_TERMS_AND_CONDITIONS,
@@ -150,25 +151,6 @@ const Organization: React.FC<any> = (props) => {
     }
   });
 
-  // Fetched here rather than shared from the home page: this route can be opened directly,
-  // so nothing guarantees the home page ever mounted. The request, the calculations and the
-  // response mapping all come from @formsflow/service, so this card and the home banner
-  // cannot report different numbers.
-  // tenantKey is in the key because the response is scoped to the tenant in the bearer
-  // token, which the key cannot otherwise see. Without it a tenant switch serves the
-  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
-  const { data: featureUsage } = useQuery(
-    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
-    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY)
-  );
-
-  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
-  // card is hidden in all three cases rather than showing a misleading number.
-  const usage = useMemo(
-    () => mapUsageResponse(featureUsage, tenantData),
-    [featureUsage, tenantData]
-  );
-
   const userRoles = useMemo<string[]>(() => {
     try {
       const parsed = JSON.parse(
@@ -181,10 +163,34 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
   const isOrganizationManager = userRoles.includes("manage_organization");
+  // Usage metering is billed per tenant, so single-tenant has none.
+  const showUsage = MULTITENANCY_ENABLED && isOrganizationManager;
+
+  // Fetched here rather than shared from the home page: this route can be opened directly,
+  // so nothing guarantees the home page ever mounted. The request, the calculations and the
+  // response mapping all come from @formsflow/service, so this card and the home banner
+  // cannot report different numbers.
+  // tenantKey is in the key because the response is scoped to the tenant in the bearer
+  // token, which the key cannot otherwise see. Without it a tenant switch serves the
+  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
+  const { data: featureUsage } = useQuery(
+    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
+    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY),
+    { enabled: showUsage }
+  );
+
+  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
+  // card is hidden in all three cases rather than showing a misleading number.
+  const usage = useMemo(
+    () => mapUsageResponse(featureUsage, tenantData),
+    [featureUsage, tenantData]
+  );
+
+  // AI and Form Governance settings save to the tenant record. Single-tenant has
+  // none yet, so saving them fails there until the API supports it.
   const showAiSettings = isAiAssistantFeatureEnabled() && isOrganizationManager;
-  // The setting lives on the tenant record, so single-tenant has no switch.
   const showGovernedContentSetting =
-    MULTITENANCY_ENABLED &&
+    FORM_GOVERNANCE_ENABLED &&
     isOrganizationManager &&
     userRoles.includes(MANAGE_GOVERNED_CONTENT);
   const refreshTenant = useCallback(
@@ -261,7 +267,7 @@ const Organization: React.FC<any> = (props) => {
   return (
     <div className="organization-container">
       <div className="organization-content">
-        {isOrganizationManager && usage && (
+        {showUsage && usage && (
           <div className="organization-usage">
             <UsageSummaryCard
               {...usage}
@@ -303,17 +309,19 @@ const Organization: React.FC<any> = (props) => {
           </section>
         )}
 
-        <AccordionSection
-          title={t("Terms & Conditions")}
-          isOpen={termsOpen}
-          onToggle={() => setTermsOpen(!termsOpen)}
-          dataTestId="organization-terms-toggle"
-        >
-          <div className="terms-actions">
-            {renderExternalButtons("View our Terms and Conditions")}
-            {renderExternalButtons("View our Privacy Policy")}
-          </div>
-        </AccordionSection>
+        {MULTITENANCY_ENABLED && (
+          <AccordionSection
+            title={t("Terms & Conditions")}
+            isOpen={termsOpen}
+            onToggle={() => setTermsOpen(!termsOpen)}
+            dataTestId="organization-terms-toggle"
+          >
+            <div className="terms-actions">
+              {renderExternalButtons("View our Terms and Conditions")}
+              {renderExternalButtons("View our Privacy Policy")}
+            </div>
+          </AccordionSection>
+        )}
       </div>
     </div>
   );
