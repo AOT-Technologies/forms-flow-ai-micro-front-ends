@@ -40,6 +40,7 @@ declare module "*.svg" {
 declare module "@formsflow/service" {
   export const {
     KeycloakService,
+    ConnectivityService,
     RequestService,
     StorageService,
     i18nService,

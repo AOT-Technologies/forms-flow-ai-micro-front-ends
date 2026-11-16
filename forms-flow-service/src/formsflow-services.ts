@@ -1,4 +1,7 @@
 import KeycloakService from "./keycloak/KeycloakService";
+import ConnectivityService from "./connectivity/connectivityService";
+import NetworkQualityService from "./connectivity/networkQualityService";
+import OfflineSettingsService from "./offline/offlineSettings";
 import StorageService from "./storage/storageService";
 import RequestService from "./request/requestService";
 import i18nService from "./resourceBundles/i18n";
@@ -97,6 +100,10 @@ export {
   mediaBelow,
   resolveTier,
 } from "./constants/breakpoints";
+export type { ConnectionState, LogoutGuard } from "./keycloak/KeycloakService";
+export type { OfflineSettings } from "./offline/offlineSettings";
+export type { NetworkLevel } from "./connectivity/networkQualityService";
+
 export type { BreakpointTier } from "./constants/breakpoints";
 
 export {
@@ -161,6 +168,9 @@ export type { AiAssistantTenantData } from "./helpers/aiAssistantPermissions";
 
 export {
   KeycloakService,
+  ConnectivityService,
+  NetworkQualityService,
+  OfflineSettingsService,
   StorageService,
   RequestService,
   i18nService,

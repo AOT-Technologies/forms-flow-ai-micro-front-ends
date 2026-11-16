@@ -8,6 +8,8 @@ import StorageService from "../storage/storageService";
 // Import the module directly, not via "../formsflow-services": the barrel also
 // imports this file, so going through it creates a module cycle (S.11).
 import KeycloakService from "../keycloak/KeycloakService";
+import ConnectivityService from "../connectivity/connectivityService";
+import { isOfflineEnabled } from "../offline/offlineSession";
 
 class RequestService {
   /**
@@ -26,6 +28,13 @@ class RequestService {
         return response;
       },
       async (error: AxiosError) => {
+        // Offline (FFF-3): no answer at all (not an error reply from the
+        // server) may mean the connection is gone even though the browser
+        // still says "online". Ask the connection check to look now.
+        if (isOfflineEnabled() && RequestService.isNetworkError(error)) {
+          ConnectivityService.reportNetworkError();
+        }
+
         const originalRequest = error.config as AxiosRequestConfig & {
           _retry?: boolean;
         };
@@ -60,6 +69,11 @@ class RequestService {
     );
 
     return instance;
+  }
+
+  /** No reply from the server (and not a request the app cancelled). */
+  private static isNetworkError(error: AxiosError): boolean {
+    return !error.response && !axios.isCancel(error) && error.code !== "ERR_CANCELED";
   }
 
   // Shared Authorization-header builders (S.9). Semantics are identical to the
