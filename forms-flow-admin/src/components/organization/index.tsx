@@ -323,17 +323,6 @@ const Organization: React.FC<any> = (props) => {
           </AccordionSection>
         )}
 
-        <AccordionSection
-          title={t("Terms & Conditions")}
-          isOpen={termsOpen}
-          onToggle={() => setTermsOpen(!termsOpen)}
-          dataTestId="organization-terms-toggle"
-        >
-          <div className="terms-actions">
-            {renderExternalButtons("View our Terms and Conditions")}
-            {renderExternalButtons("View our Privacy Policy")}
-          </div>
-        </AccordionSection>
         {MULTITENANCY_ENABLED && (
           <AccordionSection
             title={t("Terms & Conditions")}
