@@ -1,5 +1,7 @@
+# Build context is the REPO ROOT (webpack.formio.js lives outside this package):
+#   docker build -f forms-flow-components/Dockerfile .
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:24.21.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-components/app
@@ -13,12 +15,16 @@ RUN apk update && apk upgrade && \
 
 # install and cache app dependencies
 
-COPY package-lock.json /forms-flow-components/app/package-lock.json
-COPY package.json /forms-flow-components/app/package.json
+COPY forms-flow-components/package-lock.json /forms-flow-components/app/package-lock.json
+COPY forms-flow-components/package.json /forms-flow-components/app/package.json
 
-RUN npm install
+RUN npm ci --force
 
-COPY . /forms-flow-components/app/
+# Shared webpack helpers, placed one level above the app so the
+# repo-relative "../webpack.formio" require resolves as in a checkout
+COPY webpack.formio.js /forms-flow-components/
+
+COPY forms-flow-components/ /forms-flow-components/app/
 
 RUN npm run build:webpack
 
@@ -30,7 +36,7 @@ LABEL Name="formsflow"
 
 RUN mkdir /app
 COPY --from=build-stage /forms-flow-components/app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY forms-flow-components/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
 WORKDIR /usr/share/nginx/html/config

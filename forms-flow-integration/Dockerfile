@@ -1,5 +1,5 @@
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:24.21.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-integration/app
@@ -16,7 +16,7 @@ RUN apk update && apk upgrade && \
 COPY package-lock.json /forms-flow-integration/app/package-lock.json
 COPY package.json /forms-flow-integration/app/package.json
 
-RUN npm install
+RUN npm ci --force
 
 COPY . /forms-flow-integration/app/
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { MULTITENANCY_ENABLED } from "../../constants";
 
 interface Permission {
   name: string;
@@ -51,12 +50,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   const isChecked = (name: string) => payload.permissions.includes(name);
 
   const groupedPermissions = useMemo(
-    () => {
-      const visiblePermissions = MULTITENANCY_ENABLED
-        ? permissions
-        : permissions.filter((perm) => perm.name !== "manage_organization");
-      return groupByCategory(visiblePermissions);
-    },
+    () => groupByCategory(permissions),
     [permissions]
   );
 

@@ -13,7 +13,11 @@ import { readCachedGovernedContentOn } from "../governedContent/governedSetting"
 import "../style/style.scss";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
-import { MANAGE_GOVERNED_CONTENT, MULTITENANCY_ENABLED } from "../../constants";
+import {
+  FORM_GOVERNANCE_ENABLED,
+  MANAGE_GOVERNED_CONTENT,
+  MULTITENANCY_ENABLED,
+} from "../../constants";
 
 interface ManageProps {
   props: any;
@@ -60,7 +64,9 @@ const Manage: React.FC<ManageProps> = ({
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
   const isAppStylingManager = userRoles?.includes("manage_app_styling");
-  const isGovernedContentManager = userRoles?.includes(MANAGE_GOVERNED_CONTENT);
+  // With Form Governance off for the deployment, the Content tab doesn't exist.
+  const isGovernedContentManager =
+    FORM_GOVERNANCE_ENABLED && userRoles?.includes(MANAGE_GOVERNED_CONTENT);
   // Read per render: Manage stays mounted while the Organization tab changes it.
   const governedContentOn = readCachedGovernedContentOn();
   // Style is a tenant-wide admin feature, not an Organization-only one --

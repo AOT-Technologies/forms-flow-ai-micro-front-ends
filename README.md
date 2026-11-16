@@ -44,7 +44,7 @@ This modules contains the functionalities related to analyze  submissions
 All the modules are built with `single-spa`, a javascript router for micro front-end microsevices.
 
 ## Prerequisites
- - Nodejs 16 or above
+ - Nodejs 24.21.0 (see `.nvmrc`)
  - Make sure the ports `8080`, `8001`, `8081`, `8082` are available.
 
 # Getting started
@@ -65,7 +65,7 @@ All the modules are built with `single-spa`, a javascript router for micro front
 Storybook is available for the `forms-flow-components` module to showcase and test UI components.
 
 ### Prerequisites for Storybook
-- Nodejs 16 or above
+- Nodejs 24.21.0 (see `.nvmrc`)
 - Make sure port `6006` is available for Storybook
 
 ### Steps to run Storybook

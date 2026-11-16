@@ -1,9 +1,10 @@
 import { StorageService } from "@formsflow/service";
-import { MULTITENANCY_ENABLED } from "../../constants";
+import { FORM_GOVERNANCE_ENABLED, MULTITENANCY_ENABLED } from "../../constants";
 
-// Whether governed content is on for the tenant (REV 4). The tenant record
-// carries it as details.governed_content; off until an admin turns it on.
-// Single-tenant deployments have no tenant record, so it is always on there.
+// Whether governed content is on for the tenant (REV 4). Nothing is on unless
+// REACT_APP_ENABLE_FORM_GOVERNANCE is set. Then the tenant record carries it as
+// details.governed_content, off until an admin turns it on. Single-tenant
+// deployments have no tenant record, so the env alone decides there.
 
 export const GOVERNED_CONTENT_SETTING = "governed_content";
 
@@ -14,6 +15,7 @@ const isTruthyFlag = (flag: unknown): boolean =>
 export const isGovernedContentOn = (
   tenantData?: Record<string, any> | null
 ): boolean => {
+  if (!FORM_GOVERNANCE_ENABLED) return false;
   if (!MULTITENANCY_ENABLED) return true;
   const source = { ...tenantData, ...tenantData?.details };
   return isTruthyFlag(source[GOVERNED_CONTENT_SETTING]);

@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "@aot-technologies/formio-react": "^2.1.0",
-    "@aot-technologies/formiojs": "^2.1.0",
+    "@aot-technologies/formiojs": "^2.1.2",
     "@formio/core": "^2.4.0",
     "@reduxjs/toolkit": "^2.6.0",
     "@stomp/stompjs": "^7.0.1",

@@ -30,9 +30,13 @@ jest.mock("@formsflow/components", () => ({
   ),
 }));
 
+const mockFlags = { formGovernance: true };
 jest.mock("../../../constants", () => ({
   MULTITENANCY_ENABLED: false,
   MANAGE_GOVERNED_CONTENT: "manage_governed_content",
+  get FORM_GOVERNANCE_ENABLED() {
+    return mockFlags.formGovernance;
+  },
 }));
 
 // The tab bodies have their own tests; here only which one renders matters.
@@ -111,6 +115,18 @@ describe("Manage → Appearance permission", () => {
 const contentTab = () => screen.queryByRole("tab", { name: "Content" });
 
 describe("Manage → Content (governed content) permission", () => {
+  beforeEach(() => {
+    mockFlags.formGovernance = true;
+  });
+
+  it("hides the Content tab when Form Governance is off for the deployment", () => {
+    mockFlags.formGovernance = false;
+    renderAt("/admin/content", ["manage_roles", "manage_governed_content"]);
+    expect(contentTab()).not.toBeInTheDocument();
+    expect(screen.queryByTestId("content-body")).not.toBeInTheDocument();
+    expect(screen.getByTestId("roles-body")).toBeInTheDocument();
+  });
+
   it("shows the Content tab and library to manage_governed_content holders", () => {
     renderAt("/admin/content", ["manage_roles", "manage_governed_content"]);
     expect(contentTab()).toBeInTheDocument();
