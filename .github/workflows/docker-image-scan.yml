@@ -1,0 +1,114 @@
+name: docker-image-scan
+# Builds each package's runtime image from its Dockerfile and scans it with
+# Trivy. The job fails on CRITICAL or HIGH vulnerabilities that have a fix;
+# the full report (all severities) is written to the job summary.
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, so CVEs published after a merge still surface.
+    - cron: "0 3 * * 1"
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release/*
+    paths:
+      - "**/Dockerfile"
+      - "**/.dockerignore"
+      - "**/nginx.conf"
+      - "**/package-lock.json"
+      - "webpack.formio.js"
+      - "forms-flow-theme/scss/v8-scss/_mixins.scss"
+      - ".trivyignore.yaml"
+      - ".github/workflows/docker-image-scan.yml"
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+    paths:
+      - "**/Dockerfile"
+      - "**/.dockerignore"
+      - "**/nginx.conf"
+      - "**/package-lock.json"
+      - "webpack.formio.js"
+      - "forms-flow-theme/scss/v8-scss/_mixins.scss"
+      - ".trivyignore.yaml"
+      - ".github/workflows/docker-image-scan.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-image-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Official Trivy image, pinned by digest. Update deliberately.
+  TRIVY_IMAGE: aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
+
+jobs:
+  scan:
+    name: Scan ${{ matrix.package }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Five packages build from the repo root (shared webpack/theme files),
+          # three from their own directory. Mirrors each docker-compose.yaml.
+          - package: forms-flow-admin
+            context: .
+          - package: forms-flow-components
+            context: .
+          - package: forms-flow-integration
+            context: forms-flow-integration
+          - package: forms-flow-nav
+            context: .
+          - package: forms-flow-review
+            context: .
+          - package: forms-flow-service
+            context: forms-flow-service
+          - package: forms-flow-submissions
+            context: .
+          - package: forms-flow-theme
+            context: forms-flow-theme
+    env:
+      PACKAGE: ${{ matrix.package }}
+      CONTEXT: ${{ matrix.context }}
+      IMAGE: ff-scan/${{ matrix.package }}:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Build runtime image
+        run: docker build --pull --no-cache -f "$PACKAGE/Dockerfile" -t "$IMAGE" "$CONTEXT"
+
+      - name: Scan and gate on fixable CRITICAL/HIGH
+        run: |
+          trivy() {
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v trivy-cache:/root/.cache/ \
+              -v "$PWD:/work" -w /work \
+              "$TRIVY_IMAGE" "$@"
+          }
+          ignore_args=()
+          if [ -f .trivyignore.yaml ]; then
+            ignore_args=(--ignorefile .trivyignore.yaml)
+          fi
+
+          trivy image --scanners vuln --no-progress "${ignore_args[@]}" \
+            --format table --output "trivy-$PACKAGE.txt" "$IMAGE"
+          {
+            echo "### Trivy: $PACKAGE"
+            echo '```'
+            cat "trivy-$PACKAGE.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          trivy image --scanners vuln --no-progress --skip-db-update "${ignore_args[@]}" \
+            --severity CRITICAL,HIGH --ignore-unfixed --exit-code 1 "$IMAGE"
