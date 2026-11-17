@@ -11,7 +11,7 @@ ENV PATH /forms-flow-theme/app/node_modules/.bin:$PATH
 RUN apk upgrade --no-cache
 
 # The npm bundled with the base image ships vulnerable undici/tar/brace-expansion/ip-address
-RUN npm install -g npm@11.21.2
+RUN npm install -g --ignore-scripts npm@11.21.2
 
 # install and cache app dependencies
 
