@@ -38,5 +38,10 @@ WORKDIR /usr/share/nginx/html/config
 # COPY .env .
 RUN apk upgrade --no-cache && apk add --no-cache bash
 
+# Run as the image's unprivileged "nginx" user (numeric, so Kubernetes
+# runAsNonRoot can verify it). nginx.conf listens on 8080 and keeps its pid
+# and temp files in /tmp, so no root access is needed at runtime.
+USER 101
+
 
 CMD ["nginx", "-g", "daemon off;"]
