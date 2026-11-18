@@ -1,77 +1,112 @@
+# =============================================================================
+# PR Notification - stage 2 of 2 (privileged)
+# -----------------------------------------------------------------------------
+# Triggered when stage 1 (pr-notification-trigger.yml, `pull_request`)
+# completes. Runs from the default branch with access to the
+# PR_NOTIFICATION secret, so it must never check out or execute PR code.
+#
+# The artifact from stage 1 is untrusted. Only a PR number is read from it,
+# and that number is checked three ways: it must be numeric, the PR's head
+# commit must match the run that produced it, and the PR's base branch
+# must be develop, main or release/**. Every value in the card comes from
+# the GitHub API, and the JSON is built with jq so a PR title cannot break
+# or alter the payload.
+#
+# Note: `workflow_run` only fires for workflow files on the default branch.
+# =============================================================================
 name: PR Notification to Google Chat
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, closed]
-    branches:
-      - develop
-      - release/**
-      - main
+  workflow_run:
+    workflows: ["PR Notification Trigger"]
+    types: [completed]
+
+permissions: {}
 
 jobs:
   notify:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.base.repo.full_name == 'AOT-Technologies/forms-flow-ai-micro-front-ends'
-
+    if: >-
+      github.repository == 'AOT-Technologies/forms-flow-ai-micro-front-ends' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    timeout-minutes: 5
+    permissions:
+      actions: read # download the stage-1 artifact
+      pull-requests: read # read PR details from the API
     steps:
-      - name: Determine PR Status
-        id: pr_status
+      - name: Resolve and validate PR
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          if [[ "${{ github.event.action }}" == "opened" ]]; then
-            echo "status=🟢 Open" >> $GITHUB_ENV
-          elif [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
-            echo "status=🟣 Merged" >> $GITHUB_ENV
-          elif [[ "${{ github.event.action }}" == "closed" ]]; then
-            echo "status=🔴 Closed" >> $GITHUB_ENV
-          else
-            echo "status=🟢 Open" >> $GITHUB_ENV
+          set -euo pipefail
+          dir="$RUNNER_TEMP/pr-notification"
+          gh run download "$RUN_ID" --name pr-notification --dir "$dir"
+
+          number=$(head -c 32 "$dir/pr-number" | tr -d '[:space:]')
+          if [[ ! "$number" =~ ^[0-9]{1,10}$ ]]; then
+            echo "::error::Artifact does not contain a valid PR number"
+            exit 1
           fi
 
+          pr_json="$RUNNER_TEMP/pr.json"
+          gh api "repos/$GH_REPO/pulls/$number" > "$pr_json"
+
+          head_sha=$(jq -r '.head.sha' "$pr_json")
+          if [[ "$head_sha" != "$RUN_HEAD_SHA" ]]; then
+            echo "::warning::PR #$number head ($head_sha) does not match triggering run ($RUN_HEAD_SHA); skipping (stale run or forged artifact)"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          base_ref=$(jq -r '.base.ref' "$pr_json")
+          if [[ "$base_ref" != "develop" && "$base_ref" != "main" && "$base_ref" != release/* ]]; then
+            echo "::warning::PR #$number targets '$base_ref', which is not a notified branch; skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Same status mapping as before: merged, closed, otherwise open.
+          if [[ "$(jq -r '.merged' "$pr_json")" == "true" ]]; then
+            status="🟣 Merged"
+          elif [[ "$(jq -r '.state' "$pr_json")" == "closed" ]]; then
+            status="🔴 Closed"
+          else
+            status="🟢 Open"
+          fi
+
+          payload=$(jq -c --arg repo "$GH_REPO" --arg status "$status" '{
+            cards: [{
+              header: {
+                title: ("Micro front-ends: Pull Request Opened by " + .user.login),
+                subtitle: ("Pull Request #" + (.number | tostring) + ": " + .title),
+                imageUrl: .user.avatar_url
+              },
+              sections: [{
+                widgets: [
+                  { textParagraph: { text: ("Repository: " + $repo) } },
+                  { textParagraph: { text: ("Status: " + $status) } },
+                  { buttons: [{ textButton: {
+                      text: "View Pull Request",
+                      onClick: { openLink: { url: .html_url } }
+                  } }] }
+                ]
+              }]
+            }]
+          }' "$pr_json")
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "payload=$payload" >> "$GITHUB_OUTPUT"
+
       - name: Send notification to Google Chat
-        uses: fjogeleit/http-request-action@v2.0.1
+        if: steps.pr.outputs.skip == 'false'
+        uses: fjogeleit/http-request-action@f98bb26551cd1af7d3eb2674578a80754ece88db # v2.0.1
         with:
           url: ${{ secrets.PR_NOTIFICATION }}
           method: POST
           contentType: application/json
-          data: |
-            {
-              "cards": [
-                {
-                  "header": {
-                    "title": "Micro front-ends: Pull Request Opened by ${{ github.event.pull_request.user.login }}",
-                    "subtitle": "Pull Request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}",
-                    "imageUrl": "${{ github.event.pull_request.user.avatar_url }}"
-                  },
-                  "sections": [
-                    {
-                      "widgets": [
-                        {
-                          "textParagraph": {
-                            "text": "Repository: ${{ github.repository }}"
-                          }
-                        },
-                        {
-                          "textParagraph": {
-                            "text": "Status: ${{ env.status }}"
-                          }
-                        },
-                        {
-                          "buttons": [
-                            {
-                              "textButton": {
-                                "text": "View Pull Request",
-                                "onClick": {
-                                  "openLink": {
-                                    "url": "${{ github.event.pull_request.html_url }}"
-                                  }
-                                }
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
+          data: ${{ steps.pr.outputs.payload }}
