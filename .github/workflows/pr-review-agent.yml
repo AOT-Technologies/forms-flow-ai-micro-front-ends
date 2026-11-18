@@ -1,3 +1,27 @@
+# =============================================================================
+# PR Review Agent (Qodo PR-Agent)
+# -----------------------------------------------------------------------------
+# Why this still uses `pull_request_target`:
+#   PR-Agent reads the PR from the triggering event, so it cannot run from a
+#   `workflow_run` split. Fork PRs need OPENAI_KEY and a write token, and
+#   `pull_request` gives fork PRs neither.
+#
+# REQUIRED from 2026-12-02: GitHub blocks `pull_request_target` by default in
+# public repositories. An AOT-Technologies admin must allow it for THIS FILE
+# ONLY through an Actions event policy (Settings -> Actions -> Policies, event
+# rule allowing `pull_request_target`, workflow file targeting
+# `.github/workflows/pr-review-agent.yml`). Without that policy, automatic
+# reviews stop. Comment commands (`/review`, `/describe`, `/improve`) keep
+# working, because `issue_comment` is not covered by the block.
+#
+# This is only safe because the job never checks out or runs PR code. It
+# reads the diff through the API. Do not add a checkout step here.
+#
+# The image is pinned by digest. The action's own Dockerfile uses the
+# floating `pragent/pr-agent:github_action` tag, so pinning the action SHA
+# would not pin the code that runs. To upgrade, take the digest of a newer
+# `pragent/pr-agent:<version>-github_action` tag from Docker Hub.
+# =============================================================================
 name: PR Review Agent
 
 on:
@@ -16,15 +40,20 @@ permissions:
 
 jobs:
   pr_agent_job:
+    # Comment commands: PR comments only, from people with repo access.
+    # Stops anyone with a GitHub account from spending the OpenAI quota.
     if: |
-      (github.event_name == 'pull_request_target') || 
-      (github.event_name == 'issue_comment' && github.event.sender.type != 'Bot')
+      (github.event_name == 'pull_request_target') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       github.event.sender.type != 'Bot' &&
+       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
     name: Run PR Agent on every PR event or issue comment
     steps:
       - name: PR Agent action step
         id: pragent
-        uses: qodo-ai/pr-agent@main
+        uses: docker://pragent/pr-agent@sha256:548e894a88071180832b2f4233f734d0acd0db1a879e2fcbaa70bac8b8372ebe # 0.50.0-github_action
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
