@@ -53,7 +53,9 @@ const fromApiStyle = (data: any): StyleConfig => ({
   buttonShape:  data.buttonShape     ?? "square",
   headerFont:   data.headerFont      ?? "sans",
   bodyFont:     data.bodyFont        ?? "sans",
-  brandingLogo: data.brandingLogo    ?? "none",
+  // Same default the API and live forms use, so a template saved before
+  // brandingLogo existed doesn't show "none" while its forms show the badge.
+  brandingLogo: data.brandingLogo    ?? "formsflow",
 });
 
 const normalizeTemplate = (t: any): StyleTemplate => ({

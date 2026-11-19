@@ -75,11 +75,10 @@ const Manage: React.FC<ManageProps> = ({
   const canAccessStyle =
     isOrganizationManager || isDashboardManager || isUserManager || isRoleManager;
   // Mirrors the backend's is_current_user_primary_owner: branding-logo
-  // control is reserved for the tenant's actual primary owner (via
-  // manage_organization, granted only to the {tenant}-owner group). In a
-  // single-tenant deployment there is no such owner role, so no admin here
-  // -- however they reached Manage -- may alter the logo; it's shown as-is.
-  const isOwner = MULTITENANCY_ENABLED && isOrganizationManager;
+  // control needs manage_organization. Multi-tenant grants it only to the
+  // {tenant}-owner group; single-tenant has no owner role, so its /admin
+  // group (which holds manage_organization) acts as owner.
+  const isOwner = Boolean(isOrganizationManager);
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
