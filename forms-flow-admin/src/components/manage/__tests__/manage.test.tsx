@@ -46,7 +46,9 @@ jest.mock("../../users", () => () => <div data-testid="users-body" />);
 jest.mock("../../organization", () => () => (
   <div data-testid="organization-body" />
 ));
-jest.mock("../../style/StyleTab", () => () => <div data-testid="style-body" />);
+jest.mock("../../style/StyleTab", () => ({ isOwner }: any) => (
+  <div data-testid="style-body" data-owner={String(Boolean(isOwner))} />
+));
 jest.mock("../../appearance/AppearanceTab", () => () => (
   <div data-testid="appearance-body" />
 ));
@@ -109,6 +111,18 @@ describe("Manage → Appearance permission", () => {
   it("opens Appearance for a user whose only admin permission is app styling", () => {
     renderAt("/admin/roles", ["manage_app_styling"]);
     expect(screen.getByTestId("appearance-body")).toBeInTheDocument();
+  });
+});
+
+describe("Manage → Style branding-logo control (single-tenant)", () => {
+  it("lets a manage_organization holder change the branding logo", () => {
+    renderAt("/admin/style", ["manage_roles", "manage_organization"]);
+    expect(screen.getByTestId("style-body")).toHaveAttribute("data-owner", "true");
+  });
+
+  it("keeps it read-only for admins without manage_organization", () => {
+    renderAt("/admin/style", ["manage_roles", "manage_users"]);
+    expect(screen.getByTestId("style-body")).toHaveAttribute("data-owner", "false");
   });
 });
 
