@@ -32,9 +32,11 @@ on:
       - main
       - release/**
   issue_comment:
+    types: [created]
 
+# PR Agent only reads the repo and writes PR descriptions, reviews and comments.
 permissions:
-  contents: write
+  contents: read
   issues: write
   pull-requests: write
 

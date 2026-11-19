@@ -1,0 +1,13 @@
+# This image builds with the package directory as context
+# (docker build -f forms-flow-service/Dockerfile forms-flow-service), so the repo-root
+# .dockerignore does not apply. The Dockerfile installs and builds from
+# scratch, so keep local installs, build output and secrets out of the context.
+.git
+node_modules
+dist
+build
+coverage
+storybook-static
+.env
+.DS_Store
+*.log
