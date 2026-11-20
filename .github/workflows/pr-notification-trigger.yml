@@ -1,0 +1,46 @@
+# =============================================================================
+# PR Notification - stage 1 of 2 (unprivileged)
+# -----------------------------------------------------------------------------
+# Runs on `pull_request`, so fork PRs get no secrets and a read-only token.
+# It only records the PR number as an artifact. Stage 2
+# (pr-notification.yml) runs on `workflow_run` in the base-repo context,
+# re-validates everything against the GitHub API and posts to Google Chat.
+#
+# This split replaces the old `pull_request_target` trigger, which GitHub
+# blocks by default in public repositories from 2026-12-02.
+#
+# For PRs, this file is taken from the PR's merge commit, so a PR author can
+# change it. Stage 2 therefore treats the artifact as untrusted input. Keep
+# the workflow `name:` in sync with `workflows:` in pr-notification.yml.
+# =============================================================================
+name: PR Notification Trigger
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+    branches:
+      - develop
+      - release/**
+      - main
+
+permissions: {}
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.base.repo.full_name == 'AOT-Technologies/forms-flow-ai-micro-front-ends'
+    timeout-minutes: 5
+    steps:
+      - name: Record PR number
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p pr-notification
+          printf '%s\n' "$PR_NUMBER" > pr-notification/pr-number
+
+      - name: Upload PR number for stage 2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pr-notification
+          path: pr-notification/
+          retention-days: 1
