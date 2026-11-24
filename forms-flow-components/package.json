@@ -35,7 +35,7 @@
     "bootstrap": "^5.3.8",
     "bpmn-js": "^18.6.2",
     "custom-event-polyfill": "^1.0.7",
-    "i18next": "^21.6.16",
+    "i18next": "^27.2.6",
     "multiselect-react-dropdown": "^2.0.25",
     "native-promise-only": "^0.8.1",
     "react": "^18.3.1",
