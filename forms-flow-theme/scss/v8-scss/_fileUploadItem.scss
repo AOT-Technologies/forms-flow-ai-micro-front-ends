@@ -1,0 +1,194 @@
+// FileUploadItem — a single uploaded-file row (uploading / success / error)
+
+$file-item-gap: var(--spacer-075);
+// Right side is tighter: the action buttons carry their own hit-area padding
+$file-item-padding: var(--spacer-125);
+$file-item-min-height: 3.3125rem;
+$file-item-radius: 0.313rem;
+$file-item-action-size: 1.5rem;
+$file-item-icon-size: 0.875rem;
+$file-item-name-font-size: 0.8125rem; // 13px
+$file-item-close-icon-size: 0.625rem;
+$file-item-retry-height: 2rem;
+
+// ff/color/indigo/700 — no shared CSS variable exists for this shade yet
+$file-item-progress-accent: #5467fc;
+
+$color-file-item-bg: var(--white-300);
+$color-file-item-border: var(--secondary);
+$color-file-item-text: var(--gray-darkest);
+$color-file-item-muted: var(--gray-dark);
+$color-file-item-icon: var(--secondary-dark);
+$color-file-item-danger: var(--red-100);
+$color-file-item-success-bg: var(--white-200);
+$color-file-item-error: var(--orange-100);
+// Error-state tints — sampled from the design (≈ #FAECCB / #FEFCF7 / #FBF2DC)
+$color-file-item-error-track: color-mix(
+  in srgb,
+  var(--orange-300) 25%,
+  var(--yellow-300)
+);
+$color-file-item-error-bg: color-mix(
+  in srgb,
+  var(--yellow-300) 15%,
+  var(--white-300)
+);
+$color-file-item-error-border: color-mix(
+  in srgb,
+  var(--yellow-300) 60%,
+  var(--white-300)
+);
+// Keeps the error text next to the bar with the retry/close actions set apart
+$file-item-error-status-basis: 15%;
+
+@mixin file-item-icon-color($color) {
+  path[fill]:not([fill="none"]) {
+    fill: $color;
+  }
+  path[stroke],
+  svg[stroke] {
+    stroke: $color;
+  }
+}
+
+.file-upload-item {
+  // Consumed by CustomProgressBar via barColor / trackColor
+  --file-upload-item-bar: #{$file-item-progress-accent};
+  --file-upload-item-track: color-mix(
+    in srgb,
+    var(--file-upload-item-bar) 12%,
+    var(--white-300)
+  );
+
+  display: flex;
+  align-items: center;
+  gap: $file-item-gap;
+  width: 100%;
+  min-height: $file-item-min-height;
+  padding: $file-item-padding;
+  background-color: $color-file-item-bg;
+  border: 1px solid $color-file-item-border;
+  border-radius: $file-item-radius;
+  color: $color-file-item-text;
+
+  &__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    @include file-item-icon-color($color-file-item-muted);
+
+    svg {
+      width: $file-item-icon-size;
+      height: $file-item-icon-size;
+    }
+  }
+
+  &__progress {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__status {
+    flex: 0 1 auto;
+    max-width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--font-size-xs);
+    color: $color-file-item-muted;
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: $file-item-name-font-size;
+    font-weight: var(--font-weight-regular);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-025);
+    flex-shrink: 0;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: $file-item-action-size;
+    height: $file-item-action-size;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    @include file-item-icon-color($color-file-item-icon);
+
+    svg {
+      width: $file-item-icon-size;
+      height: $file-item-icon-size;
+    }
+
+    &:hover {
+      background-color: var(--secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-dark);
+      outline-offset: 1px;
+    }
+
+    &--close svg {
+      width: $file-item-close-icon-size;
+      height: $file-item-close-icon-size;
+    }
+
+    &--danger {
+      @include file-item-icon-color($color-file-item-danger);
+    }
+  }
+
+  .custom-button.file-upload-item__retry {
+    flex-shrink: 0;
+    min-height: $file-item-retry-height;
+    height: $file-item-retry-height;
+    padding: 0 var(--spacer-075);
+    background-color: $color-file-item-success-bg;
+    border-color: $color-file-item-border;
+  }
+
+  &--success {
+    background-color: $color-file-item-success-bg;
+
+    .file-upload-item__icon {
+      @include file-item-icon-color($color-file-item-icon);
+    }
+  }
+
+  &--error {
+    --file-upload-item-bar: #{$color-file-item-error};
+    --file-upload-item-track: #{$color-file-item-error-track};
+
+    background-color: $color-file-item-error-bg;
+    border-color: $color-file-item-error-border;
+
+    .file-upload-item__icon {
+      @include file-item-icon-color($color-file-item-error);
+    }
+
+    .file-upload-item__status {
+      flex: 0 0 $file-item-error-status-basis;
+      color: $color-file-item-error;
+    }
+  }
+}
+
+.file-upload-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-025);
+}

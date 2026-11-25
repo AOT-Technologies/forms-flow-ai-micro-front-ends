@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import { toast } from "react-toastify";
 import {
   V8CustomButton,
   UpArrowIcon,
@@ -15,11 +16,26 @@ import {
   fetchFeatureUsage,
   mapUsageResponse,
   SUBMISSION_FEATURE_KEY,
+  isAiAssistantFeatureEnabled,
 } from "@formsflow/service";
 import { UsageSummaryCard } from "./UsageSummaryCard";
-import API from "../../endpoints";
+import OfflineSettingsSection from "./OfflineSettingsSection";
 import {
+  AiPermissionsSection,
+  AiPermissions,
+  AiPermissionsPayload,
+  DEFAULT_AI_PERMISSIONS,
+  fromTenantData,
+} from "./AiPermissionsSection";
+import { GovernedContentSettingSection } from "./GovernedContentSettingSection";
+import { isGovernedContentOn } from "../governedContent/governedSetting";
+import API from "../../endpoints";
+import { updateAiPermissions } from "../../services/organization";
+import {
+  FORM_GOVERNANCE_ENABLED,
+  MANAGE_GOVERNED_CONTENT,
   MULTITENANCY_ENABLED,
+  OFFLINE_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
 } from "../../constants";
@@ -79,8 +95,41 @@ const Organization: React.FC<any> = (props) => {
   const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [termsOpen, setTermsOpen] = useState(true);
+  const [offlineOpen, setOfflineOpen] = useState(true);
+  const [aiPermissions, setAiPermissions] = useState<AiPermissions>(
+    DEFAULT_AI_PERMISSIONS
+  );
+  const [savedAiPermissions, setSavedAiPermissions] = useState<AiPermissions>(
+    DEFAULT_AI_PERMISSIONS
+  );
+  const [savingAiPermissions, setSavingAiPermissions] = useState(false);
+  // Bumped after a successful save so the tenant-refresh effect below refetches the
+  // record and the AI settings are repopulated from what the server stored.
+  const [tenantRefreshCount, setTenantRefreshCount] = useState(0);
 
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
+
+  const saveAiPermissions = useCallback(
+    (payload: AiPermissionsPayload) => {
+      setSavingAiPermissions(true);
+      updateAiPermissions(
+        tenantKey,
+        payload,
+        () => {
+          setSavedAiPermissions(aiPermissions);
+          setSavingAiPermissions(false);
+          setTenantRefreshCount((count) => count + 1);
+          toast.success(t("Update success!"));
+        },
+        (error) => {
+          console.error("Failed to update AI permissions:", error);
+          setSavingAiPermissions(false);
+          toast.error(t("Update failed!"));
+        }
+      );
+    },
+    [aiPermissions, tenantKey, t]
+  );
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   // Every CTA the card can render - "Upgrade to Professional Plan", "Upgrade to 2500
@@ -105,25 +154,6 @@ const Organization: React.FC<any> = (props) => {
     }
   });
 
-  // Fetched here rather than shared from the home page: this route can be opened directly,
-  // so nothing guarantees the home page ever mounted. The request, the calculations and the
-  // response mapping all come from @formsflow/service, so this card and the home banner
-  // cannot report different numbers.
-  // tenantKey is in the key because the response is scoped to the tenant in the bearer
-  // token, which the key cannot otherwise see. Without it a tenant switch serves the
-  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
-  const { data: featureUsage } = useQuery(
-    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
-    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY)
-  );
-
-  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
-  // card is hidden in all three cases rather than showing a misleading number.
-  const usage = useMemo(
-    () => mapUsageResponse(featureUsage, tenantData),
-    [featureUsage, tenantData]
-  );
-
   const userRoles = useMemo<string[]>(() => {
     try {
       const parsed = JSON.parse(
@@ -136,6 +166,40 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
   const isOrganizationManager = userRoles.includes("manage_organization");
+  // Usage metering is billed per tenant, so single-tenant has none.
+  const showUsage = MULTITENANCY_ENABLED && isOrganizationManager;
+
+  // Fetched here rather than shared from the home page: this route can be opened directly,
+  // so nothing guarantees the home page ever mounted. The request, the calculations and the
+  // response mapping all come from @formsflow/service, so this card and the home banner
+  // cannot report different numbers.
+  // tenantKey is in the key because the response is scoped to the tenant in the bearer
+  // token, which the key cannot otherwise see. Without it a tenant switch serves the
+  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
+  const { data: featureUsage } = useQuery(
+    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
+    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY),
+    { enabled: showUsage }
+  );
+
+  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
+  // card is hidden in all three cases rather than showing a misleading number.
+  const usage = useMemo(
+    () => mapUsageResponse(featureUsage, tenantData),
+    [featureUsage, tenantData]
+  );
+
+  // AI and Form Governance settings save to the tenant record. Single-tenant has
+  // none yet, so saving them fails there until the API supports it.
+  const showAiSettings = isAiAssistantFeatureEnabled() && isOrganizationManager;
+  const showGovernedContentSetting =
+    FORM_GOVERNANCE_ENABLED &&
+    isOrganizationManager &&
+    userRoles.includes(MANAGE_GOVERNED_CONTENT);
+  const refreshTenant = useCallback(
+    () => setTenantRefreshCount((count) => count + 1),
+    []
+  );
 
   // Refreshes the cached tenant record. The home page reads the same storage keys, so this
   // effect is kept even though the subscription summary it used to feed has been replaced.
@@ -167,7 +231,16 @@ const Organization: React.FC<any> = (props) => {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname]);
+  }, [location.pathname, tenantRefreshCount]);
+
+  // The tenant record is the source of truth for the saved AI settings: populate the
+  // form (and its saved baseline) from it on load and after every refetch.
+  useEffect(() => {
+    if (!tenantData) return;
+    const stored = fromTenantData(tenantData);
+    setAiPermissions(stored);
+    setSavedAiPermissions(stored);
+  }, [tenantData]);
 
   const renderExternalButtons = (label: string) => {
     const key = label
@@ -197,7 +270,7 @@ const Organization: React.FC<any> = (props) => {
   return (
     <div className="organization-container">
       <div className="organization-content">
-        {isOrganizationManager && usage && (
+        {showUsage && usage && (
           <div className="organization-usage">
             <UsageSummaryCard
               {...usage}
@@ -207,17 +280,62 @@ const Organization: React.FC<any> = (props) => {
           </div>
         )}
 
-        <AccordionSection
-          title={t("Terms & Conditions")}
-          isOpen={termsOpen}
-          onToggle={() => setTermsOpen(!termsOpen)}
-          dataTestId="organization-terms-toggle"
-        >
-          <div className="terms-actions">
-            {renderExternalButtons("View our Terms and Conditions")}
-            {renderExternalButtons("View our Privacy Policy")}
-          </div>
-        </AccordionSection>
+        {showAiSettings && (
+          <section className="organization-section">
+            <div className="organization-section-header organization-section-header--static">
+              <h3 className="organization-section-title">
+                {t("AI Permissions")}
+              </h3>
+            </div>
+            <AiPermissionsSection
+              value={aiPermissions}
+              savedValue={savedAiPermissions}
+              onChange={setAiPermissions}
+              onSave={saveAiPermissions}
+              saving={savingAiPermissions}
+            />
+          </section>
+        )}
+
+        {showGovernedContentSetting && (
+          <section className="organization-section">
+            <div className="organization-section-header organization-section-header--static">
+              <h3 className="organization-section-title">
+                {t("Governed Content")}
+              </h3>
+            </div>
+            <GovernedContentSettingSection
+              tenantKey={tenantKey}
+              enabled={isGovernedContentOn(tenantData)}
+              onSaved={refreshTenant}
+            />
+          </section>
+        )}
+
+        {isOrganizationManager && OFFLINE_ENABLED && (
+          <AccordionSection
+            title={t("Offline Submission")}
+            isOpen={offlineOpen}
+            onToggle={() => setOfflineOpen(!offlineOpen)}
+            dataTestId="organization-offline-toggle"
+          >
+            <OfflineSettingsSection />
+          </AccordionSection>
+        )}
+
+        {MULTITENANCY_ENABLED && (
+          <AccordionSection
+            title={t("Terms & Conditions")}
+            isOpen={termsOpen}
+            onToggle={() => setTermsOpen(!termsOpen)}
+            dataTestId="organization-terms-toggle"
+          >
+            <div className="terms-actions">
+              {renderExternalButtons("View our Terms and Conditions")}
+              {renderExternalButtons("View our Privacy Policy")}
+            </div>
+          </AccordionSection>
+        )}
       </div>
     </div>
   );

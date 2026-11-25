@@ -128,7 +128,7 @@ const MenuComponent = ({
   const readColors = useCallback((active) => {
     const styles = getComputedStyle(document.documentElement);
     const activeColor = styles
-      .getPropertyValue("--navbar-menu-font-color-active")
+      .getPropertyValue("--primary-dark")
       ?.trim();
     const inactiveColor = styles
       .getPropertyValue("--navbar-submenu-font-color")

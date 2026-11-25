@@ -9,6 +9,15 @@ const isEnabled = (v: string | false): boolean =>
 
 export const MULTITENANCY_ENABLED = isEnabled(MULTITENANCY_ENABLED_VARIABLE);
 
+// Offline forms (FFF-3): the env keys that allow the organization switches on
+// Manage -> Organization. With a key off, its switch is hidden.
+export const OFFLINE_ENABLED = isEnabled(
+  window._env_?.REACT_APP_OFFLINE_ENABLED || false
+);
+export const OFFLINE_AUTO_SYNC_ENABLED =
+  OFFLINE_ENABLED &&
+  isEnabled(window._env_?.REACT_APP_OFFLINE_AUTO_SYNC_ENABLED || false);
+
 export const KEYCLOAK_ENABLE_CLIENT_AUTH = isEnabled(
   KEYCLOAK_ENABLE_CLIENT_AUTH_VARIABLE
 );
@@ -17,6 +26,8 @@ export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 
 export const ADMIN_ROLE = "formsflow-admin";
 
+export const MANAGE_GOVERNED_CONTENT = "manage_governed_content";
+
 export const URL_UPGRADE = window._env_?.REACT_APP_URL_UPGRADE || "";
 export const URL_CONTACT_SALES =
   window._env_?.REACT_APP_URL_CONTACT_SALES || "";
@@ -24,3 +35,17 @@ export const URL_TERMS_AND_CONDITIONS =
   window._env_?.REACT_APP_URL_TERMS_AND_CONDITIONS || "";
 export const URL_PRIVACY_POLICY =
   window._env_?.REACT_APP_URL_PRIVACY_POLICY || "";
+
+export const AI_ASSISTANT_ENABLED = isEnabled(
+  window._env_?.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED || false
+);
+
+// Deployment switch for Form Governance (governed content); off when unset.
+export const FORM_GOVERNANCE_ENABLED = isEnabled(
+  window._env_?.REACT_APP_ENABLE_FORM_GOVERNANCE || false
+);
+
+export const AI_ASSISTANT_PRIVACY_NOTICE_LENGTH = Number.parseInt(
+  window._env_?.REACT_APP_AI_PRIVACY_NOTICE_LEN || "300",
+  10
+);

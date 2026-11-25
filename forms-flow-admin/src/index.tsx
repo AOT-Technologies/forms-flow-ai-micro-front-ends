@@ -8,7 +8,11 @@ import {
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
-import { MULTITENANCY_ENABLED } from "./constants";
+import {
+  FORM_GOVERNANCE_ENABLED,
+  MANAGE_GOVERNED_CONTENT,
+  MULTITENANCY_ENABLED,
+} from "./constants";
 import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
@@ -39,12 +43,17 @@ const Admin = React.memo(({ props }: any) => {
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  const isAppStylingManager = userRoles?.includes("manage_app_styling");
+  const isGovernedContentManager =
+    FORM_GOVERNANCE_ENABLED && userRoles?.includes(MANAGE_GOVERNED_CONTENT);
   // const isLinkManager = userRoles.includes("manage_links");
   const isAdmin =
     isDashboardManager ||
     isRoleManager ||
     isUserManager ||
-    isOrganizationManager;
+    isOrganizationManager ||
+    isAppStylingManager ||
+    isGovernedContentManager;
   const location = useLocation().pathname;
   const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
@@ -90,27 +99,23 @@ const Admin = React.memo(({ props }: any) => {
   }, [tenantId]);
 
   React.useEffect(() => {
-    // Always initialize this microfrontend's own KeycloakService singleton --
-    // `isAuth` reflects props.getKcInstance() (the shell's instance), not
-    // whether THIS bundle's own private copy of @formsflow/service (not
-    // shared/externalized across microfrontends) has ever called
-    // getInstance()/initKeycloak(). Skipping this when the shell instance is
-    // already authenticated left admin's own singleton permanently
-    // uninitialized, so RequestService's 401-retry (which calls
-    // KeycloakService.updateToken() from THIS bundle) always found no
-    // instance and silently retried with "Bearer null" once the access
-    // token actually expired -- surfacing as "Invalid token" errors on
-    // writes, most visibly on the Style tab where a template is composed
-    // over several minutes before saving.
-    // initKeycloak uses onLoad: "check-sso" (a silent iframe check against
-    // the already-active SSO session, not a visible redirect), so this is
-    // safe to run even though the user is already authenticated.
+    // @formsflow/service is a runtime external (import map), so this is the
+    // same KeycloakService singleton the shell already initialized. Calling
+    // initKeycloak() on it again makes keycloak-js 26 throw "A 'Keycloak'
+    // instance can only be initialized once." -- reuse it when authenticated
+    // (RequestService's 401-retry then refreshes via this same instance), and
+    // only initialize when admin is the first to load it.
     let instance = KeycloakService.getInstance(
       KEYCLOAK_URL_AUTH,
       KEYCLOAK_URL_REALM,
       KEYCLOAK_CLIENT,
       tenantId
     );
+    if (instance.isAuthenticated()) {
+      setIsAuth(true);
+      publish("FF_AUTH", instance);
+      return;
+    }
     instance.initKeycloak(() => {
       setIsAuth(instance.isAuthenticated());
       publish("FF_AUTH", instance);
@@ -135,8 +140,12 @@ const Admin = React.memo(({ props }: any) => {
       (location === "/admin/dashboard" && !isDashboardManager) ||
       (location === "/admin/roles" && !isRoleManager) ||
       (location === "/admin/users" && !isUserManager) ||
+      (location === "/admin/appearance" && !isAppStylingManager) ||
+      (location.startsWith("/admin/content") && !isGovernedContentManager) ||
       !(
         isOrganizationManager ||
+        isAppStylingManager ||
+        isGovernedContentManager ||
         isDashboardManager ||
         isRoleManager ||
         isUserManager
@@ -168,6 +177,18 @@ const Admin = React.memo(({ props }: any) => {
                   />
                   <Route
                     path=":tab"
+                    element={
+                      <Manage
+                        props={props}
+                        setTab={setPage}
+                        setDashboardCount={setDashboardCount}
+                        setRoleCount={setRoleCount}
+                        setUserCount={setUserCount}
+                      />
+                    }
+                  />
+                  <Route
+                    path="content/:blockId"
                     element={
                       <Manage
                         props={props}

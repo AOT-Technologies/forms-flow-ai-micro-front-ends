@@ -3,6 +3,7 @@ import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
+import NotAvailableOffline from "./offline/NotAvailableOffline";
 import { StyleServices, HelperServices } from "@formsflow/service";
 import PropTypes from "prop-types";
 
@@ -25,6 +26,7 @@ export default function Root(props) {
   }, [customLogoAlignment]);
   const headerRef = useRef(null);
   const [sidenavHeight, setSidenavHeight] = useState("100%");
+  const [headerHeight, setHeaderHeight] = useState(0);
   const hasMultitenancyHeader = customLogoPath || customTitle;
   const [isPreviewRoute, setIsPreviewRoute] = useState(false);
 
@@ -42,9 +44,9 @@ export default function Root(props) {
     if (hasMultitenancyHeader) {
       StyleServices?.setCSSVariable("--client-nav", "3rem");
     }
-    const headerHeight = headerRef.current?.offsetHeight || 0;
-    const totalHeight = `calc(100% - ${headerHeight}px)`;
-    setSidenavHeight(totalHeight);
+    const height = headerRef.current?.offsetHeight || 0;
+    setHeaderHeight(height);
+    setSidenavHeight(`calc(100% - ${height}px)`);
   }, [hasMultitenancyHeader]);
 
   return (
@@ -74,6 +76,8 @@ export default function Root(props) {
             <Sidebar props={props} sidenavHeight={sidenavHeight} />
           </div>
         )}
+        {/* Offline, pages outside Submit say "Not available offline" (FFF-3). */}
+        <NotAvailableOffline top={headerHeight} />
       </>
     </Router>
   );

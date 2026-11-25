@@ -1,0 +1,58 @@
+// TitledSection — title over a divider, an optional note at its right, then the
+// section's content. Consecutive sections are spaced apart.
+
+$titled-section-gap: 2.4375rem; // 39px between consecutive sections
+$titled-section-switch-on: var(--ff-color-indigo-500, #8d9afd); // ff/color/indigo/500
+$titled-section-switch-off: var(--ff-color-gray-200, #e5e5e5); // ff/color/gray/200
+
+.titled-section {
+  & + & {
+    margin-top: $titled-section-gap;
+  }
+
+  .titled-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacer-100);
+    padding-bottom: 0.8125rem; // 13px
+    margin-bottom: var(--spacer-100);
+    border-bottom: 1px solid var(--ff-color-gray-200, #e5e5e5);
+  }
+
+  .titled-section-title {
+    margin: 0;
+    font-size: 1.25rem; // 20px
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--ff-color-gray-600, #7c7d7f);
+  }
+
+  .titled-section-note {
+    flex-shrink: 0;
+    font-size: 0.875rem; // 14px
+    color: var(--ff-color-gray-800, #4a4a4a);
+  }
+
+  // Enable / disable switches inside a section are indigo when on and gray when
+  // off, not the default green / binary red. Disabled switches keep their own look.
+  .custom-switch:not(.custom-switch-disabled) {
+    &.custom-switch-on,
+    &.custom-switch-on-primary {
+      background: $titled-section-switch-on;
+
+      &:hover:not(:focus-visible) {
+        box-shadow: 0 0 0 2px $titled-section-switch-on;
+      }
+    }
+
+    &.custom-switch-off,
+    &.custom-switch-off-binary {
+      background: $titled-section-switch-off;
+
+      &:hover:not(:focus-visible) {
+        box-shadow: 0 0 0 2px $titled-section-switch-off;
+      }
+    }
+  }
+}

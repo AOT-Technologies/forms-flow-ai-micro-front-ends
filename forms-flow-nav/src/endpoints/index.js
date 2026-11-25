@@ -13,8 +13,8 @@ const API = {
   GET_PERMISSIONS: `${WEB_BASE_URL}/roles/permissions`,
   USER_LOGIN_DETAILS: (userId) =>
     `${WEB_BASE_URL}/user/${userId}/login-details`,
-  ONBOARDING_USER_ROLE: `${WEB_BASE_URL}/user/info`,
   CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
+  BRANDING: `${WEB_BASE_URL}/branding`,
 };
 
 export default API;

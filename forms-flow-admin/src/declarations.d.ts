@@ -43,6 +43,7 @@ declare module "@formsflow/service" {
     KeycloakService,
     RequestService,
     StorageService,
+    HelperServices,
     i18nService,
     getRoute,
     MAIN_ROUTE,
@@ -72,6 +73,17 @@ declare module "@formsflow/service" {
     getUsageVariant,
     isOverLimit,
     getColumnPresetSizing,
+    isAiAssistantFeatureEnabled,
+    cacheBranding,
+    applyBranding,
+    BRANDING_UPDATED_EVENT,
+    BRANDING_PREVIEW_ATTR,
+    BRANDING_PREVIEW_DRAFT,
+    BRANDING_PREVIEW_READY,
+    BRANDING_PREVIEW_AUTH_REQUEST,
+    BRANDING_PREVIEW_AUTH,
+    BRANDING_PREVIEW_UNAVAILABLE,
+    BRANDING_PREVIEW_WHEEL,
   }: any;
 }
 
@@ -84,7 +96,10 @@ declare module "@formsflow/components" {
     CustomTabs,
     FormInput,
     FormTextArea,
+    CustomTextArea,
+    CustomCheckbox,
     CustomButton,
+    CustomRadioButton,
     DeleteIcon,
     CopyIcon,
     ConfirmModal,
@@ -109,8 +124,13 @@ declare module "@formsflow/components" {
     FORMSFLOW_LOGO_ICON_SVG,
     FORMSFLOW_WEBSITE_URL,
     UsageSummaryCard,
-    mapTenantDataToUsage
+    mapTenantDataToUsage,
+    FileUploadItem,
+    SwitchCard,
+    ApplicationLogoFull,
   }: any;
+
+  export type FileUploadStatus = "uploading" | "success" | "error";
 
   export type StyleConfig = {
     background: string;

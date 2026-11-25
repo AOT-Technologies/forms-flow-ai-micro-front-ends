@@ -19,6 +19,7 @@ describe("PERMISSIONS constants", () => {
       ANALYZE_METRICS_VIEW: "analyze_metrics_view",
       MANAGE_ROLES: "manage_roles",
       MANAGE_USERS: "manage_users",
+      MANAGE_APP_STYLING: "manage_app_styling",
     });
   });
 });

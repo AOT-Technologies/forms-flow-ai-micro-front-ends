@@ -305,3 +305,8 @@ $color-warning-disabled: var(--gray-medium);
   font-size: var(--font-size-table);
   padding: .6875rem 1.25rem;
 }
+
+// Tenant branding: square buttons. The branding runtime sets the class on <html>.
+.ff-button-square .custom-button:not(.icon-only) {
+  border-radius: 5px;
+}

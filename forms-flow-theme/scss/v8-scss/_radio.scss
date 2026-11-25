@@ -2,10 +2,13 @@
 @use "mixins";
 
 // Radio Variables - Using consistent rem/em units for better scalability
-$radio-size: 1.25rem;            // 20px at 16px base
-$radio-dot-size: 0.625rem;       // 10px at 16px base
-$radio-ring-width: 0.125rem;     // visual ring thickness (2px)
+$radio-size: 1rem;               // 16px at 16px base
+$radio-dot-size: 0.5rem;         // 8px at 16px base
+$radio-ring-width: 0.1rem;       // visual ring thickness (1.6px)
 $radio-gap-inline: 2rem;         // space between inline radios
+$radio-gap-stacked: 0.5625rem;   // 9px between stacked radio rows
+$radio-label-font-size: 0.875rem;   // 14px — ff/text-style/sans/body-sml-regular
+$radio-label-line-height: 1.25rem;  // 20px
 
 // Transition variables
 $radio-transition-duration: 0.15s;
@@ -26,6 +29,11 @@ $color-primary-light: var(--primary-dark);
 $color-primary-lighter: var(--primary-dark);
 $color-primary-border: var(--primary-dark);
 // $color-primary-border and $color-primary-disabled are not used by radios
+
+// Figma "Radio-Primary" tokens
+$color-ring-default: var(--gray-medium);                          // ff/color/gray/300   #D1D2D3
+$color-ring-selected: var(--ff-color-indigo-300, #c6ccfe);        // ff/color/indigo/300
+$color-dot-selected: var(--ff-color-indigo-500, #8d9afd);         // ff/color/indigo/500
 
 // Radio Mixins
 @mixin radio-input-base {
@@ -80,17 +88,35 @@ $color-primary-border: var(--primary-dark);
   &--inline {
     .form-check {
       display: inline-flex;
-      align-items: center;
       margin-right: $radio-gap-inline;
     }
   }
 
+  &:not(&--inline) .form-check + .form-check {
+    margin-top: $radio-gap-stacked;
+  }
+
+  // Figma "radio / Required|Optional" row: 16px radio + 4px gap + label, centered
   .form-check {
-    padding-left: 0; // we handle spacing on the label
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-025);
+    min-height: $radio-label-line-height;
+    padding-left: 0;
+    margin-bottom: 0;
+
+    .form-check-input[type='radio'] {
+      float: none; // undo bootstrap's float/negative offset
+      flex-shrink: 0;
+      margin: 0;
+    }
 
     .form-check-label {
-      margin-left: var(--spacer-050);
-      color: $color-dark-gray; // align with palette used in _button.scss
+      margin-left: 0;
+      color: $color-dark-gray; // ff/color/gray/800
+      font-size: $radio-label-font-size;
+      font-weight: 400;
+      line-height: $radio-label-line-height;
     }
   }
 
@@ -100,7 +126,7 @@ $color-primary-border: var(--primary-dark);
     background-image: none; // override bootstrap default dot
     box-shadow: none; // remove bootstrap default focus shadow (we add our own)
     accent-color: initial; // ensure browser accent color does not override
-    border-color: $color-primary-light; // use primary color when selected
+    border-color: $color-ring-default; // unselected ring
 
     // hover / tab state (deselect / hover)
     &:hover {
@@ -122,18 +148,18 @@ $color-primary-border: var(--primary-dark);
     // selected state
     &:checked {
       background-color: $color-white; // keep white bg; dot renders via ::after
-      border-color: $color-primary-light; // selected uses primary-light
+      border-color: $color-ring-selected;
       &::after {
         transform: translate(-50%, -50%) scale(1);
-        background-color: $color-primary; // default selected dot
+        background-color: $color-dot-selected; // default selected dot
       }
     }
 
     // ensure keyboard focus wins over selected border color
     &:checked:focus-visible {
-      border-color: $color-primary;
+      border-color: $color-primary-selected;
       &::after {
-        background-color: $color-primary; // focused selected dot
+        background-color: $color-dot-selected; // focused selected dot
       }
     }
 
@@ -156,15 +182,15 @@ $color-primary-border: var(--primary-dark);
   // Variant modifiers
   &.custom-radio-button--primary {
     .form-check .form-check-input[type='radio'] {
-      border-color: $color-primary-light;
+      border-color: $color-ring-default;
 
       &:hover { border-color: $color-primary-selected; }
 
       &:focus-visible { border-color: $color-primary-selected; }
 
       &:checked {
-        border-color: $color-primary-light;
-        &::after { background-color: $color-primary; }
+        border-color: $color-ring-selected;
+        &::after { background-color: $color-dot-selected; }
       }
 
       &:checked:focus-visible { border-color: $color-primary-selected; }

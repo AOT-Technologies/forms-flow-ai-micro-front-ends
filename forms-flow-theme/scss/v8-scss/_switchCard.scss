@@ -1,0 +1,64 @@
+// SwitchCard — bordered card with a switch, title and optional description.
+// Colours are CSS custom properties so the component's `colors` prop can override
+// them per instance.
+
+$switch-card-radius: 0.75rem; // 12px - matches the usage card
+$switch-card-padding: 1.44rem 1.37rem 1.37rem;
+// Pale tints of the switch's own "on" green; the theme has no lighter step.
+$switch-card-checked-border: #cbedde;
+$switch-card-checked-background: #f7fcfa;
+
+// Switch centred on the left, title and description stacked beside it. The Switch
+// wrapper uses display: contents so its own label and button join this grid,
+// keeping the visible title as the switch's accessible name.
+.switch-card {
+  --switch-card-border: var(--ff-gray-medium);
+  --switch-card-background: var(--white-200);
+  --switch-card-checked-border: #{$switch-card-checked-border};
+  --switch-card-checked-background: #{$switch-card-checked-background};
+  --switch-card-label-color: var(--secondary-dark);
+  --switch-card-description-color: var(--gray-dark);
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--spacer-100);
+  align-items: center;
+  padding: $switch-card-padding;
+  border: 1px solid var(--switch-card-border);
+  border-radius: $switch-card-radius;
+  background-color: var(--switch-card-background);
+
+  &--checked {
+    border-color: var(--switch-card-checked-border);
+    background-color: var(--switch-card-checked-background);
+  }
+
+  .switch-card-switch {
+    display: contents;
+
+    .custom-switch {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+    }
+
+    .custom-switch-label {
+      grid-column: 2;
+      grid-row: 1;
+      margin: 0;
+      font-weight: var(--font-weight-medium);
+      color: var(--switch-card-label-color);
+    }
+  }
+
+  // No description - keep the switch and title on one centred row.
+  &--no-description .switch-card-switch .custom-switch {
+    grid-row: 1;
+  }
+
+  .switch-card-description {
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0;
+    color: var(--switch-card-description-color);
+  }
+}

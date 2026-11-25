@@ -19,6 +19,13 @@ import {
   StorageService,
   StyleServices,
   storeChecklistItems,
+  applyBranding,
+  cacheBranding,
+  getCachedBranding,
+  truncateDisplayName,
+  BRANDING_UPDATED_EVENT,
+  isBrandingPreview,
+  startBrandingPreview,
 } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import {
@@ -28,9 +35,9 @@ import {
 import { setShowApplications } from "../constants/userConstants";
 import { PERMISSIONS } from "../constants/permissions";
 import { checkIntegrationEnabled } from "../services/integration";
+import { fetchBranding } from "../services/branding";
 import {
   fetchUserLoginDetails,
-  getOnBoardingUserRole,
   fetchChecklist,
   getOnboardingDetails
 } from "../services/user";
@@ -43,6 +50,10 @@ import {
 } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from "prop-types";
+
+// Written by forms-flow-web (FFF-3): read at start, since the event may come
+// before this menu is mounted.
+const OFFLINE_ATTENTION_KEY = "ff_offline_attention";
 
 // Pure constants hoisted to module scope so they are not rebuilt on every
 // Sidebar render (N.1.3). Values are byte-identical to the previous inline
@@ -187,15 +198,53 @@ UserProfile.propTypes = {
   collapsed: PropTypes.bool,
 };
 
-const renderLogo = (hideLogo, collapsed) => {
-  if (hideLogo === "true") return null;
+// Inside the Appearance tab's live-preview iframe: draft branding comes from the
+// parent page instead of the API, and nothing is cached.
+const IS_BRANDING_PREVIEW = isBrandingPreview?.() ?? false;
 
-  return (
-    <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
+// Branding is cached per tenant; root-config reads the same key from the URL.
+const brandingTenantKey = () =>
+  MULTITENANCY_ENABLED
+    ? /^\/tenant\/([^/]+)/.exec(window.location.pathname)?.[1] || null
+    : null;
+
+export const BrandLogo = ({ logoUrl, displayName }) => {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [logoUrl]);
+
+  if (!logoUrl || failed) {
+    return (
       <ApplicationLogoFull
         width={107}
         height={20}
         data-testid="application-logo"
+      />
+    );
+  }
+  return (
+    <img
+      className="tenant-logo"
+      src={logoUrl}
+      alt={displayName || "Logo"}
+      onError={() => setFailed(true)}
+      data-testid="tenant-logo"
+    />
+  );
+};
+
+BrandLogo.propTypes = {
+  logoUrl: PropTypes.string,
+  displayName: PropTypes.string,
+};
+
+const renderLogo = (hideLogo, collapsed, branding) => {
+  if (hideLogo === "true") return null;
+
+  return (
+    <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
+      <BrandLogo
+        logoUrl={branding?.logoUrl}
+        displayName={branding?.displayName}
       />
     </div>
   );
@@ -206,6 +255,15 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const [tenantName, setTenantName] = React.useState("");
   const [applicationTitle, setApplicationTitle] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
+  // FFF-3 (Figma DEV 3.3b): forms from this device that need attention, from
+  // forms-flow-web; a count on Submit (a dot on the collapsed rail).
+  const [offlineAttention, setOfflineAttention] = React.useState(() => {
+    try {
+      return Number(localStorage.getItem(OFFLINE_ATTENTION_KEY)) || 0;
+    } catch (error) {
+      return 0;
+    }
+  });
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
   const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
@@ -214,6 +272,14 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
+  const [branding, setBranding] = useState(
+    () => getCachedBranding?.(brandingTenantKey()) ?? null
+  );
+
+  useEffect(
+    () => (IS_BRANDING_PREVIEW ? startBrandingPreview(setBranding) : undefined),
+    []
+  );
   const { t } = useTranslation();
 
   const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
@@ -299,8 +365,8 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   // rail is hidden by CSS and the hamburger overlay takes over.
   // The rail expands only when the toggle is clicked. Hovering a collapsed icon
   // shows that row's tooltip instead (see .menu-flyout) and never widens the nav.
-
-  const [collapsed, setCollapsed] = useState(!overlay);
+  // The live preview opens expanded so the logo and display name are visible.
+  const [collapsed, setCollapsed] = useState(!overlay && !IS_BRANDING_PREVIEW);
 
   const handleToggleClick = () => {
     if (onToggle) {
@@ -385,6 +451,11 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
       }
     });
 
+    // Branding saved in Manage -> Appearance: update the sidebar without a reload.
+    props.subscribe(BRANDING_UPDATED_EVENT || "ES_BRANDING_UPDATED", (msg, data) => {
+      setBranding(data);
+    });
+
     // Subscribe to profile updates to refresh user details in navbar
     props.subscribe("profileUpdated", () => {
       const updatedUserDetail =
@@ -398,6 +469,10 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
     props.subscribe("FF_ONBOARDING_DETAILS", () => {
       loadChecklistFromOnboarding();
     });
+
+    props.subscribe("FF_OFFLINE_ATTENTION", (msg, count) => {
+      setOfflineAttention(Number(count) || 0);
+    });
   }, []);
 
   // On successful authentication, load federated login details and integration config
@@ -405,21 +480,18 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
     if (isAuthenticated) {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
-      getOnBoardingUserRole().then((onboarding) => {
-        if (onboarding?.checklistSkipped) {
-          return;
-        }
-        return fetchChecklist()
-          .then((res) => {
-            const data = res.data || res;
-            const next = Array.isArray(data) ? data : [];
-            storeChecklistItems(next);
-          })
-          .catch(() => {
-            storeChecklistItems(null);
-          });
-      });
       loadChecklistFromOnboarding();
+      if (!IS_BRANDING_PREVIEW) {
+        fetchBranding()
+          .then((res) => {
+            setBranding(res.data);
+            applyBranding?.(res.data);
+            cacheBranding?.(res.data, brandingTenantKey());
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -454,8 +526,17 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const handleProfileModal = () => setShowProfile(true);
   const handleProfileClose = () => setShowProfile(false);
 
+  // Moves to the home page only once the logout goes ahead: a logout
+  // cancelled in the "unsent forms" warning (FFF-3) keeps the current page.
+  // An older @formsflow/service has userLogout() without that step: move first.
   const logout = () => {
-    navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
+    const toHome = () =>
+      navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
+    if (instance.userLogout.length > 0) {
+      instance.userLogout(toHome);
+      return;
+    }
+    toHome();
     instance.userLogout();
   };
 
@@ -571,7 +652,7 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
       {/* Logo and the collapse toggle share one header row (Figma 8.3): logo
           at the left inset, toggle pinned right. */}
       <div className="sidenav-header">
-        {renderLogo(hideLogo, collapsed)}
+        {renderLogo(hideLogo, collapsed, branding)}
         {/* The toggle is now the only way to expand the nav, so it has to be a
             real button: the span it replaces was not focusable or key-operable. */}
         <div className={`menu-toggle-icon${collapsed ? "" : " open"}`}>
@@ -587,6 +668,15 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
           </button>
         </div>
       </div>
+      {!collapsed && branding?.displayName && (
+        <div
+          className="tenant-display-name"
+          title={branding.displayName}
+          data-testid="tenant-display-name"
+        >
+          {truncateDisplayName?.(branding.displayName) ?? branding.displayName}
+        </div>
+      )}
       <div
         className={`options-container${collapsed ? " collapsed" : ""}`}
         data-testid="options-container"
@@ -670,6 +760,7 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
               mainMenu="Submit"
               subMenu={SUBMIT_SUBMENU}
               collapsed={collapsed}
+              badgeCount={offlineAttention || undefined}
             />
           )}
         </ul>

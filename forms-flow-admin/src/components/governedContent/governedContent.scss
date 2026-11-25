@@ -1,0 +1,499 @@
+// Manage -> Content (governed content). Figma "REV 1 / Admin / Create a governed block".
+// Figma gray/700 (#636365) and gray/900 (#2E2E30) have no theme variable;
+// --secondary-dark and --gray-darkest are the closest.
+
+// Figma chip/Retired; yellow/100 and yellow/900 have no theme variable, so the
+// theme's yellow tints stand in.
+.ff-governed-chip {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 0.1875rem 0.5625rem;
+  border: 1px solid var(--yellow-100);
+  border-radius: 0.6875rem;
+  // Figma yellow/100 (#FDF7EA) is paler than the theme's lightest tint
+  // (--yellow-300 is a 25% mix), so mix the theme yellow at 10%.
+  background: color-mix(in srgb, var(--yellow-100) 10%, var(--white-300));
+  font-size: var(--font-size-s);
+  font-weight: var(--font-weight-medium);
+  line-height: normal;
+  color: var(--gray-darkest);
+}
+
+// Figma alert on the library (REV 4.1 / 4.5) and View block (REV 3.5): no
+// icon, unlike CustomInfo, and room for a button. Figma indigo/500 (#8D9AFD)
+// and indigo/50 (#F4F5FF) have no theme variable: --indigo-200 (#99A4F8) and
+// a 5% indigo tint stand in.
+.ff-governed-alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  border: 1px solid var(--indigo-200);
+  border-radius: 0.3125rem;
+  background: var(--white-200);
+
+  // The alert's CTA: 40px pill, 14px label. Two classes to outrank the
+  // theme's .custom-button.custom-button--primary without !important.
+  .custom-button.custom-button--primary {
+    min-height: 2.5rem;
+    padding: 0 1.5rem;
+    border-color: var(--indigo-200);
+    border-radius: 1.25rem;
+    background-color: color-mix(
+      in srgb,
+      var(--indigo-100) 5%,
+      var(--white-300)
+    );
+    // 14px; the v8 theme redefines --font-size-xs as 10px.
+    font-size: 0.875rem;
+    color: var(--gray-darkest);
+  }
+
+  // Figma ff/text-style/sans/body-sml-regular, line-height normal. Light
+  // weight, as CustomInfo uses: regular renders heavier than the design.
+  &__text {
+    margin: 0;
+    font-family: var(--font-family-base);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    line-height: normal;
+    color: var(--gray-darkest);
+  }
+}
+
+.ff-governed-list {
+  &__name {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+
+  &__empty-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-darkest);
+  }
+
+  &__empty-text {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: var(--gray-darkest);
+  }
+}
+
+.ff-governed-form {
+  // View block: title with the Retired chip beside it (REV 3.5).
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+
+    .ff-governed-form__title {
+      margin: 0;
+    }
+  }
+
+  &__title {
+    margin: 0 0 1.5rem;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.75rem;
+    color: var(--gray-darkest);
+  }
+
+  // Fields 520px and preview 528px wide (Figma); stacked on narrow windows.
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 32.5rem) minmax(0, 33rem);
+    gap: 2.5rem;
+    align-items: start;
+
+    @media (max-width: 1199.98px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+
+    .input-text {
+      margin-bottom: 0;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  // Shared with the preview's "Preview" heading.
+  &__label {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-regular);
+    line-height: 1.25rem;
+    color: var(--gray-darkest);
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: var(--font-size-s);
+    line-height: 1rem;
+    color: var(--gray-dark);
+  }
+
+  &__requirement fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__notice {
+    max-width: 68rem;
+    margin-bottom: 1.5rem;
+  }
+
+  // Spans both layout columns (32.5 + 2.5 + 33rem) so Retire block lines up
+  // with the preview's right edge (Figma REV 2.2).
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    max-width: 68rem;
+    margin-top: 1.5rem;
+  }
+
+  &__button-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    color: var(--gray-darkest);
+  }
+}
+
+// Read-only details on View block (REV 3.5): body-sml-regular, 14px / 20px.
+.ff-governed-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.25rem;
+  color: var(--gray-darkest);
+  overflow-wrap: anywhere;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    dt {
+      font-weight: var(--font-weight-regular);
+    }
+
+    dd {
+      margin: 0;
+
+      p,
+      ul,
+      ol {
+        margin: 0 0 1.25rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      ul,
+      ol {
+        padding-left: 1.25rem;
+      }
+    }
+  }
+}
+
+.ff-governed-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+
+  &__box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 2rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: 0.25rem;
+    background: var(--white-300);
+  }
+
+  &__placeholder {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gray-darkest);
+  }
+
+  &__sample {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  &__sample-label {
+    font-size: 0.875rem;
+    color: var(--gray-dark);
+  }
+
+  &__sample-input {
+    height: 2.25rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: 0.25rem;
+    background: var(--white-200);
+  }
+
+  &__block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  &__heading {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-darkest);
+  }
+
+  &__body {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--secondary-dark);
+
+    p,
+    ul,
+    ol {
+      margin: 0 0 1.3125rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    ul,
+    ol {
+      padding-left: 1.25rem;
+    }
+
+    a {
+      color: var(--vivid);
+      text-decoration: underline;
+    }
+  }
+}
+
+.ff-rich-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray-x-light);
+  border-radius: 0.25rem;
+  background: var(--white-300);
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.5rem;
+    border-bottom: 1px solid var(--gray-x-light);
+    border-radius: 0.25rem 0.25rem 0 0;
+    background: var(--white-200);
+  }
+
+  &__tool {
+    padding: 0.25rem 0.5rem;
+    border: 0;
+    border-radius: 0.25rem;
+    background: none;
+    font-size: 0.875rem;
+    color: var(--secondary-dark);
+
+    &:hover {
+      background: var(--white-100);
+    }
+
+    &--bold {
+      font-weight: bold;
+    }
+
+    &--italic {
+      font-style: italic;
+    }
+
+    &--active {
+      background: var(--primary);
+      color: var(--vivid);
+    }
+  }
+
+  &__divider {
+    width: 1px;
+    height: 1.125rem;
+    background: var(--gray-medium);
+  }
+
+  // Grows with the wording up to the cap in REV 1.5, then scrolls.
+  &__area {
+    min-height: 9.875rem;
+    max-height: 27.25rem;
+    overflow-y: auto;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--gray-darkest);
+
+    p,
+    ul,
+    ol {
+      margin: 0 0 1.3125rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    ul,
+    ol {
+      padding-left: 1.25rem;
+    }
+
+    a {
+      color: var(--vivid);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-dark);
+      outline-offset: -2px;
+    }
+  }
+
+  // REV 1.9: shown under the first line, right-aligned.
+  &__link-bar {
+    position: absolute;
+    top: 4.75rem;
+    right: 0.5rem;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: calc(100% - 1rem);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: 0.25rem;
+    background: var(--white-300);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &__link-address {
+    overflow: hidden;
+    font-size: var(--font-size-s);
+    color: var(--gray-dark);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__link-action {
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 0.875rem;
+    color: var(--gray-darkest);
+
+    &--edit {
+      color: var(--vivid);
+    }
+  }
+
+  &__link-popover {
+    position: absolute;
+    top: 4.875rem;
+    right: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 20rem;
+    max-width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: 0.25rem;
+    background: var(--white-300);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  &__link-label {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gray-darkest);
+  }
+
+  &__link-input--invalid {
+    border-color: var(--orange-100);
+  }
+
+  &__link-hint {
+    margin: 0;
+    font-size: var(--font-size-s);
+    color: var(--gray-dark);
+
+    &--invalid {
+      color: var(--orange-100);
+    }
+  }
+
+  &__link-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
