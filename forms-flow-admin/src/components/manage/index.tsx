@@ -7,10 +7,17 @@ import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
 import StyleTab from "../style/StyleTab";
+import AppearanceTab from "../appearance/AppearanceTab";
+import GovernedContent, { NEW_BLOCK_ID } from "../governedContent";
+import { readCachedGovernedContentOn } from "../governedContent/governedSetting";
 import "../style/style.scss";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
-import { MULTITENANCY_ENABLED } from "../../constants";
+import {
+  FORM_GOVERNANCE_ENABLED,
+  MANAGE_GOVERNED_CONTENT,
+  MULTITENANCY_ENABLED,
+} from "../../constants";
 
 interface ManageProps {
   props: any;
@@ -29,10 +36,17 @@ const Manage: React.FC<ManageProps> = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { tenantId: urlTenantId, tab: urlTab } = useParams<{
+  const {
+    tenantId: urlTenantId,
+    tab: tabParam,
+    blockId,
+  } = useParams<{
     tenantId?: string;
     tab?: string;
+    blockId?: string;
   }>();
+  // "content/:blockId" (new/edit governed content block) belongs to the Content tab.
+  const urlTab = blockId ? "content" : tabParam;
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const location = useLocation();
@@ -49,17 +63,22 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  const isAppStylingManager = userRoles?.includes("manage_app_styling");
+  // With Form Governance off for the deployment, the Content tab doesn't exist.
+  const isGovernedContentManager =
+    FORM_GOVERNANCE_ENABLED && userRoles?.includes(MANAGE_GOVERNED_CONTENT);
+  // Read per render: Manage stays mounted while the Organization tab changes it.
+  const governedContentOn = readCachedGovernedContentOn();
   // Style is a tenant-wide admin feature, not an Organization-only one --
   // any manage-capable admin can open it (the owner-only branding-logo
   // control inside it is gated separately, see StyleTab's isOwner prop).
   const canAccessStyle =
     isOrganizationManager || isDashboardManager || isUserManager || isRoleManager;
   // Mirrors the backend's is_current_user_primary_owner: branding-logo
-  // control is reserved for the tenant's actual primary owner (via
-  // manage_organization, granted only to the {tenant}-owner group). In a
-  // single-tenant deployment there is no such owner role, so no admin here
-  // -- however they reached Manage -- may alter the logo; it's shown as-is.
-  const isOwner = MULTITENANCY_ENABLED && isOrganizationManager;
+  // control needs manage_organization. Multi-tenant grants it only to the
+  // {tenant}-owner group; single-tenant has no owner role, so its /admin
+  // group (which holds manage_organization) acts as owner.
+  const isOwner = Boolean(isOrganizationManager);
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
@@ -68,13 +87,23 @@ const Manage: React.FC<ManageProps> = ({
     if (isUserManager) return "users";
     if (isDashboardManager) return "dashboard";
     if (isOrganizationManager) return "organization";
+    if (isAppStylingManager) return "appearance";
+    if (isGovernedContentManager) return "content";
     return "roles";
   };
 
   // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      const validTabs = ["organization", "dashboard", "users", "roles", "style"];
+      const validTabs = [
+        "organization",
+        "dashboard",
+        "users",
+        "roles",
+        "style",
+        "appearance",
+        "content",
+      ];
       if (validTabs.includes(urlTab)) {
         if (urlTab === "organization" && !isOrganizationManager)
           return defaultTab();
@@ -82,6 +111,10 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         if (urlTab === "style" && !canAccessStyle) return defaultTab();
+        if (urlTab === "appearance" && !isAppStylingManager)
+          return defaultTab();
+        if (urlTab === "content" && !isGovernedContentManager)
+          return defaultTab();
         return urlTab;
       }
     }
@@ -101,6 +134,8 @@ const Manage: React.FC<ManageProps> = ({
     isUserManager,
     isRoleManager,
     canAccessStyle,
+    isAppStylingManager,
+    isGovernedContentManager,
   ]);
 
   // Redirect to default tab if on /admin without a tab
@@ -121,6 +156,8 @@ const Manage: React.FC<ManageProps> = ({
         users: "Users",
         roles: "Roles",
         style: "Style",
+        appearance: "Appearance",
+        content: "Content",
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
@@ -161,6 +198,12 @@ const Manage: React.FC<ManageProps> = ({
             {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
             )}
+            {isAppStylingManager && (
+              <Tab eventKey="appearance" title={t("Appearance")} />
+            )}
+            {isGovernedContentManager && (
+              <Tab eventKey="content" title={t("Content")} />
+            )}
           </Tabs>
 
           {activeTab === "roles" && isRoleManager && (
@@ -184,6 +227,22 @@ const Manage: React.FC<ManageProps> = ({
                 ariaLabel={t("Add New Users")}
                 // The invite modal it opens only renders in multitenant mode.
                 disabled={!MULTITENANCY_ENABLED}
+                action
+                variant="primary"
+              />
+            </div>
+          )}
+
+          {activeTab === "content" && isGovernedContentManager && !blockId && (
+            <div className="manage-tabs-action">
+              <V8CustomButton
+                onClick={() =>
+                  navigate(`${baseUrl}admin/content/${NEW_BLOCK_ID}`)
+                }
+                dataTestId="governed-content-create-button"
+                label={t("Create new block")}
+                ariaLabel={t("Create new block")}
+                disabled={!governedContentOn}
                 action
                 variant="primary"
               />
@@ -231,6 +290,29 @@ const Manage: React.FC<ManageProps> = ({
             {activeTab === "style" && canAccessStyle && (
               <div className="manage-content">
                 <StyleTab isOwner={isOwner} />
+              </div>
+            )}
+            {activeTab === "appearance" && isAppStylingManager && (
+              <div className="manage-content">
+                <AppearanceTab
+                  tenantKey={MULTITENANCY_ENABLED ? tenantId : null}
+                  publish={props?.publish}
+                  homeUrl={`${baseUrl}home`}
+                />
+              </div>
+            )}
+            {activeTab === "content" && isGovernedContentManager && (
+              <div className="manage-content">
+                <GovernedContent
+                  basePath={`${baseUrl}admin/content`}
+                  blockId={blockId}
+                  enabled={governedContentOn}
+                  organizationPath={
+                    isOrganizationManager
+                      ? `${baseUrl}admin/organization`
+                      : undefined
+                  }
+                />
               </div>
             )}
           </div>

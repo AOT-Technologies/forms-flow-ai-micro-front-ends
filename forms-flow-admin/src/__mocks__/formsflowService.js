@@ -17,6 +17,10 @@ export const StorageService = {
   },
 };
 
+export const HelperServices = {
+  getLocaldate: (date) => date,
+};
+
 export const KeycloakService = {
   getInstance: () => ({
     initKeycloak: noop,
@@ -51,3 +55,7 @@ export const getRedirectUrl = () => "/";
 // users.tsx calls completeChecklistByRouteKey("invite_user")(), so the
 // wrapper in src/services/checklist expects this to return a function.
 export const completeChecklistByRouteKey = () => () => {};
+
+export const isAiAssistantFeatureEnabled = () => false;
+export const isSubmissionAssistantEnabledForTenant = () => false;
+export const canShowSubmissionAssistant = () => false;

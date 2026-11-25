@@ -41,10 +41,10 @@ export const DEFAULT_STYLE: StyleConfig = {
  * DOM node (via innerHTML) without depending on any bundler asset pipeline.
  */
 /* eslint-disable max-len */
-export const FORMSFLOW_LOGO_ICON_SVG = `<svg viewBox="0 0 27.44 27.44" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10.7801 13.72L12.7401 15.68L16.6601 11.76" stroke="#1529C4" stroke-width="1.96" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M4.89998 13.7201C4.89998 16.0593 5.82923 18.3027 7.4833 19.9567C9.13737 21.6108 11.3808 22.5401 13.72 22.5401C16.1857 22.5308 18.5524 21.5687 20.3252 19.8549L22.54 17.6401M22.54 22.5401V17.6401H17.64" stroke="#1B34FB" stroke-width="1.96" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M22.54 13.7199C22.54 11.3807 21.6107 9.13729 19.9567 7.48322C18.3026 5.82915 16.0592 4.8999 13.72 4.8999C11.2543 4.90917 8.88757 5.8713 7.11478 7.5851L4.89998 9.7999M9.79998 9.7999H4.89998V4.8999" stroke="#1B34FB" stroke-width="1.96" stroke-linecap="round" stroke-linejoin="round"/>
+export const FORMSFLOW_LOGO_ICON_SVG = `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M30 40.1199L36.6667 46.7866L50 33.4532" stroke="#1529C4" stroke-width="6.66667" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9.99951 40.12C9.99951 48.0765 13.1602 55.7071 18.7863 61.3332C24.4124 66.9593 32.043 70.12 39.9995 70.12C48.3863 70.0884 56.4363 66.8159 62.4662 60.9867L69.9995 53.4533M69.9995 53.4533H53.3328M69.9995 53.4533V70.12" stroke="#1B34FB" stroke-width="6.66667" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M69.9995 40.12C69.9995 32.1635 66.8388 24.5329 61.2127 18.9068C55.5866 13.2807 47.956 10.12 39.9995 10.12C31.6127 10.1515 23.5627 13.4241 17.5328 19.2533L9.99951 26.7867M9.99951 26.7867V10.12M9.99951 26.7867H26.6662" stroke="#1B34FB" stroke-width="6.66667" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 /* eslint-enable max-len */
 

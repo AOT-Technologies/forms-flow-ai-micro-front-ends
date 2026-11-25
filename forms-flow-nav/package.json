@@ -22,12 +22,12 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/runtime": "^7.15.3",
     "@testing-library/jest-dom": "^6.4.0",
-    "@testing-library/react": "^16.0.0",
+    "@testing-library/react": "^16.3.3",
     "babel-jest": "^29.7.0",
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-react-important-stuff": "^3.0.0",
     "eslint-plugin-prettier": "^3.4.1",
     "identity-obj-proxy": "^3.0.0",
@@ -38,25 +38,25 @@
     "pretty-quick": "^3.1.1",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^4.8.0",
+    "webpack": "^5.112.2",
+    "webpack-cli": "^5.1.4",
     "webpack-config-single-spa-react": "^4.0.0",
-    "webpack-dev-server": "^4.15.2",
-    "webpack-merge": "^5.8.0"
+    "webpack-dev-server": "^5.2.6",
+    "webpack-merge": "^6.0.1"
   },
   "overrides": {
     "uuid": "^11.1.1"
   },
   "dependencies": {
     "@aot-technologies/formio-react": "^2.1.0",
-    "@aot-technologies/formiojs": "^2.1.0",
+    "@aot-technologies/formiojs": "^2.1.2",
     "i18next-browser-languagedetector": "^7.0.1",
     "react": "^18.3.1",
-    "react-bootstrap": "^2.10.6",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
     "react-i18next": "^11.15.3",
-    "react-router-dom": "^6.28.0",
+    "react-router-dom": "^7.18.5",
     "single-spa-react": "^6.0.2"
   }
 }

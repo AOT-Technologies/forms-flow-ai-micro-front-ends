@@ -1,0 +1,14 @@
+# Package Dockerfiles build with the REPO ROOT as context
+# (e.g. docker build -f forms-flow-nav/Dockerfile .) so they can reach the
+# shared webpack.formio.js and theme mixins. Keep the context small.
+.git
+.github
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/storybook-static
+**/.env
+**/.DS_Store
+**/*.log
+AUDIT-20-7-2026
