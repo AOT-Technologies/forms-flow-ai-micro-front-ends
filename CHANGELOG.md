@@ -2,6 +2,73 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.4.0 - 26-11-2026
+
+`Added`
+
+**forms-flow-admin**
+* Added a new **Appearance** tab under Manage for tenant application branding — display name, logo upload, rounded or square buttons, a live preview of the application and Restore to Default. Access is controlled by the new `manage_app_styling` permission.
+* Added a new **Content** tab under Manage for governed content — create, edit, view and retire approved content blocks (heading, rich-text body, owner, policy reference, required or optional) that are applied to forms. Available when Form Governance is enabled for the deployment (`REACT_APP_ENABLE_FORM_GOVERNANCE`) and the user has the `manage_governed_content` permission.
+* Added a Governed Content switch to the Organization tab to turn governed content on or off for the tenant; while it is off, the content library is read-only.
+* Added an AI Permissions section to the Organization tab — organization-wide AI form submission assistance, submitter AI chat and a privacy notice shown to submitters. Available when `REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED` is on.
+* Added an Offline Submission section to the Organization tab to turn offline submission and automatic sync on or off for the organization. Available when `REACT_APP_OFFLINE_ENABLED` is on.
+
+**forms-flow-service**
+* Added offline support services, active when `REACT_APP_OFFLINE_ENABLED` is on and the organization has offline submission turned on — `ConnectivityService` checks whether the formsflow API can actually be reached, `NetworkQualityService` rates the connection as good, slow, unstable or offline, and `OfflineSettingsService` keeps the organization's offline switches.
+* `KeycloakService` can start the app offline from a saved sign-in pass (no refresh or ID token is stored), renews the login when the connection returns, exposes the connection state (`online`, `offline`, `sign-in-needed`), supports logout guards so apps can confirm before logging out, and handles logout while offline.
+* `initKeycloak` accepts an optional error callback so callers can show a message when the sign-in server cannot be reached; existing callers are unaffected.
+* Added shared tenant branding helpers (`applyBranding`, `cacheBranding`, `getCachedBranding`, `truncateDisplayName`, the `ES_BRANDING_UPDATED` event) and the Appearance live-preview helpers.
+* Added shared AI submission assistant visibility helpers (`isAiAssistantFeatureEnabled`, `isSubmissionAssistantEnabledForTenant`, `canShowSubmissionAssistant`) used by forms-flow-admin and forms-flow-web.
+
+**forms-flow-nav**
+* The sidebar now shows the tenant's branding logo and display name, and updates as soon as branding is saved.
+* While offline, pages outside Submit show a "Not available offline" page instead of failing.
+* Added a count on the Submit menu for offline forms that need attention.
+
+**forms-flow-components**
+* Added the `FileUploadItem` (uploading, uploaded and error states), `SwitchCard` and `TitledSection` components, with Storybook stories for `FileUploadItem` and `SwitchCard`.
+* Added `LockIcon`, `FileIcon`, `FileDownloadIcon`, `SearchIcon`, `EditOutlineIcon` and `TrashOutlineIcon`.
+
+**forms-flow-theme**
+* Added styles for the file upload item, switch card and titled section components.
+* Added square-button styles used by tenant branding.
+* Added theme colour variables for the offline form status pills.
+
+`Modified`
+
+**forms-flow-components**
+* Updated the formsflow short logo.
+* `ProgressBar` now accepts `trackColor` and `barColor` props.
+
+**forms-flow-theme**
+* Restyled radio buttons to match the updated design.
+
+`Generic Changes`
+* Upgraded `@aot-technologies/formiojs` to ^2.1.2 across all packages, fixing file upload failures for submitters.
+* Upgraded React Router (`react-router-dom`) from v6 to v7 in integration, nav, review and submissions, matching admin.
+* Upgraded `webpack-cli` and `webpack-dev-server` to v5 across all packages.
+* Upgraded Node to 24.22.3 in Dockerfiles, CI workflows and `.nvmrc`.
+* Docker images for admin, nav, components, review and submissions are now built from the repository root (`docker build -f forms-flow-<name>/Dockerfile .`). External builds that use the package folder as the build context must switch to the repository root.
+* Dependabot now follows a security-first update policy with grouped updates and a triage workflow; added a Docker image vulnerability scan workflow.
+
+`Fixed`
+
+**forms-flow-admin**
+* Fixed the "Keycloak instance can only be initialized once" error when opening Manage.
+* Single-tenant admins can now open the Organization tab and assign the Organization (Billing) permission; the usage card and Terms & Conditions remain multi-tenant only.
+* Single-tenant admins can now manage the formsflow branding badge in the Style tab, and templates saved before the badge setting existed now show the formsflow badge instead of none.
+* Limited role descriptions to 200 characters.
+
+**forms-flow-nav**
+* Removed a duplicate `/user/info` call from the sidebar.
+
+**forms-flow-submissions**
+* Handled a failed submission filter request instead of leaving it unhandled.
+
+`Generic Changes`
+* Patched Docker image vulnerabilities — the runtime image moved to `nginx:1.30.6-alpine3.24-slim` and the build image to `node:24.22.3-alpine3.24`, both digest-pinned — and nginx now runs as a non-root user.
+* Resolved Dependabot security alerts across all packages.
+
 ## 8.3.0 - 29-09-2026
 
 `Added`
